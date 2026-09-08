@@ -1,0 +1,7 @@
+{
+  "name": "Food Calorie",
+  "description": "ถ่ายรูปอาหาร คำนวณสารอาหารและแคลอรี่ด้วย AI (AI Food Calorie and Nutrition Scanner)",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
