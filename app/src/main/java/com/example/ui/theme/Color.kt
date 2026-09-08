@@ -16,11 +16,11 @@ val GreenOnContainer = Color(0xFF002204)
 val AmberTertiary = Color(0xFFF57C00)
 val AmberContainer = Color(0xFFFFE0B2)
 
-val WarmBackground = Color(0xFFFAF8F5)
+val WarmBackground = Color(0xFFF9F9FB)
 val WarmSurface = Color(0xFFFFFFFF)
-val WarmSurfaceVariant = Color(0xFFF1EAE4)
-val WarmOnSurface = Color(0xFF1E1B19)
-val WarmOnSurfaceVariant = Color(0xFF52443D)
+val WarmSurfaceVariant = Color(0xFFF0F1F5)
+val WarmOnSurface = Color(0xFF141619)
+val WarmOnSurfaceVariant = Color(0xFF686E78)
 
 // Dark Palette
 val OrangePrimaryDark = Color(0xFFFF8A65)

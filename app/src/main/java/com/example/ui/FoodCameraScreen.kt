@@ -391,19 +391,23 @@ fun FoodCameraScreen(
                 )
             }
 
-            // Cuisine Category Tabs (Swiss / Thai / All)
-            Row(
+            // Cuisine Category Tabs (Swiss / Italian / French / American / Thai / All)
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                    .padding(vertical = 6.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val tabs = listOf(
                     "Swiss" to AppStrings.tabSwiss(language),
+                    "Italian" to AppStrings.tabItalian(language),
+                    "French" to AppStrings.tabFrench(language),
+                    "American" to AppStrings.tabAmerican(language),
                     "Thai" to AppStrings.tabThai(language),
                     "All" to AppStrings.tabAll(language)
                 )
-                tabs.forEach { (key, label) ->
+                items(tabs) { (key, label) ->
                     val isSelected = selectedCuisineTab == key
                     Surface(
                         shape = RoundedCornerShape(12.dp),
@@ -424,6 +428,9 @@ fun FoodCameraScreen(
             val filteredDishes = remember(selectedCuisineTab) {
                 when (selectedCuisineTab) {
                     "Swiss" -> FoodSamples.swissDishes
+                    "Italian" -> FoodSamples.italianDishes
+                    "French" -> FoodSamples.frenchDishes
+                    "American" -> FoodSamples.americanDishes
                     "Thai" -> FoodSamples.thaiDishes
                     else -> FoodSamples.sampleDishes
                 }
@@ -442,6 +449,9 @@ fun FoodCameraScreen(
                     }
                     val flagEmoji = when (dish.cuisine) {
                         "Swiss" -> "🇨🇭"
+                        "Italian" -> "🇮🇹"
+                        "French" -> "🇫🇷"
+                        "American" -> "🇺🇸"
                         "Thai" -> "🇹🇭"
                         else -> "🍽️"
                     }

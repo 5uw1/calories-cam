@@ -2,8 +2,24 @@ package com.example.util
 
 object AppStrings {
     fun appTitle(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "Food Calorie AI"
-        AppLanguage.TH -> "Food Calorie AI"
+        AppLanguage.EN -> "CalorieCam"
+        AppLanguage.TH -> "CalorieCam"
+    }
+
+    // Menu options
+    fun menuSettings(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "Daily Goal Setting"
+        AppLanguage.TH -> "ตั้งเป้าหมายแคลอรี่"
+    }
+
+    fun menuHistory(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "History"
+        AppLanguage.TH -> "ประวัติอาหาร"
+    }
+
+    fun menuLanguage(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "ภาษาไทย (TH)"
+        AppLanguage.TH -> "English (EN)"
     }
 
     // Navigation
@@ -178,13 +194,28 @@ object AppStrings {
     }
 
     fun tabSwiss(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "🇨🇭 Swiss Dishes"
-        AppLanguage.TH -> "🇨🇭 อาหารสวิส"
+        AppLanguage.EN -> "🇨🇭 Swiss"
+        AppLanguage.TH -> "🇨🇭 สวิส"
+    }
+
+    fun tabItalian(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "🇮🇹 Italian"
+        AppLanguage.TH -> "🇮🇹 อิตาเลียน"
+    }
+
+    fun tabFrench(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "🇫🇷 French"
+        AppLanguage.TH -> "🇫🇷 ฝรั่งเศส"
+    }
+
+    fun tabAmerican(lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> "🇺🇸 American"
+        AppLanguage.TH -> "🇺🇸 อเมริกัน"
     }
 
     fun tabThai(lang: AppLanguage): String = when (lang) {
-        AppLanguage.EN -> "🇹🇭 Thai Dishes"
-        AppLanguage.TH -> "🇹🇭 อาหารไทย"
+        AppLanguage.EN -> "🇹🇭 Thai"
+        AppLanguage.TH -> "🇹🇭 ไทย"
     }
 
     fun tabAll(lang: AppLanguage): String = when (lang) {

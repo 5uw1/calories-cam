@@ -73,7 +73,7 @@ object GeminiFoodService {
             val base64Image = bitmapToBase64(bitmap)
 
             val prompt = """
-                คุณคือนักกำหนดอาหารและผู้เชี่ยวชาญด้านโภชนาการ วิเคราะห์ภาพอาหารนี้อย่างละเอียด (สามารถระบุอาหารไทย อาหารสวิส เช่น Cheese Fondue, Raclette, Rösti, Bircher Müesli, Zürcher Geschnetzeltes, Älplermagronen หรืออาหารนานาชาติอื่นๆ ได้อย่างแม่นยำ):
+                คุณคือนักกำหนดอาหารและผู้เชี่ยวชาญด้านโภชนาการ วิเคราะห์ภาพอาหารนี้อย่างละเอียด (สามารถระบุอาหารไทย, สวิส, อิตาเลียน, ฝรั่งเศส, อเมริกัน หรืออาหารนานาชาติอื่นๆ ได้อย่างแม่นยำ เช่น Pizza Margherita, Spaghetti Carbonara, Beef Bourguignon, Ratatouille, Cheeseburger, Mac & Cheese, Fondue, Raclette, Rösti ฯลฯ):
                 1. ระบุชื่ออาหาร (foodName ภาษาไทย, foodNameEn ภาษาอังกฤษ)
                 2. ประเมินขนาดจานหรือปริมาณ (portionSize เช่น 1 จาน (350g), 1 ถ้วย)
                 3. คำนวณพลังงานรวม (calories หน่วย kcal เป็นจำนวนเต็ม)
@@ -82,6 +82,7 @@ object GeminiFoodService {
                 6. ระบุประเภทมื้ออาหารที่เหมาะสม (mealType: 'มื้อเช้า', 'มื้อเที่ยง', 'มื้อเย็น', หรือ 'ของว่าง')
                 7. คำแนะนำด้านสุขภาพสั้นๆ (healthTip ภาษาไทย เช่น ประโยชน์หรือข้อควรระวัง)
                 8. รายการส่วนประกอบหลักที่มองเห็นในภาพ (ingredients เช่น ชีส, มันฝรั่ง, เนื้อสัตว์)
+                9. ระบุสัญชาติอาหาร (cuisine: 'Swiss', 'Italian', 'French', 'American', 'Thai', หรือ 'International')
 
                 ตอบกลับเฉพาะ JSON object ที่มีโครงสร้างดังนี้เท่านั้น (ห้ามใส่ markdown หรือข้อความอื่น):
                 {
@@ -97,7 +98,8 @@ object GeminiFoodService {
                   "sodium": 850,
                   "mealType": "มื้อเที่ยง",
                   "healthTip": "คำแนะนำโภชนาการ",
-                  "ingredients": ["ส่วนประกอบ 1", "ส่วนประกอบ 2"]
+                  "ingredients": ["ส่วนประกอบ 1", "ส่วนประกอบ 2"],
+                  "cuisine": "Italian"
                 }
             """.trimIndent()
 
@@ -195,7 +197,8 @@ object GeminiFoodService {
                 mealType = foodJson.optString("mealType", "มื้อเที่ยง"),
                 healthTip = foodJson.optString("healthTip", "ควรดื่มน้ำอย่างน้อยวันละ 8 แก้ว และรับประทานอาหารให้หลากหลาย"),
                 ingredients = ingredientsList,
-                bitmap = bitmap
+                bitmap = bitmap,
+                cuisine = foodJson.optString("cuisine", "International")
             )
 
             Result.success(analysis)

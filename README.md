@@ -7,7 +7,7 @@ An AI-powered Android calorie & nutrition tracker application built with **Kotli
 ## ✨ Features
 
 - **AI Food Vision Scanner**: Point your camera at any food dish to automatically identify calories, macros (protein, carbs, fat), and micronutrients.
-- **Swiss & Thai Cuisine Presets**: Curated dishes from Switzerland (Cheese Fondue, Raclette, Rösti, Bircher Muesli, etc.) and Thailand with accurate nutritional breakdowns.
+- **Multi-Cuisine Presets**: Curated dishes from **Switzerland** (Cheese Fondue, Raclette, Rösti), **Italy** (Pizza Margherita, Carbonara, Lasagna, Risotto, Tiramisu), **France** (Beef Bourguignon, Onion Soup, Quiche, Ratatouille, Croissant), **USA** (Double Cheeseburger, BBQ Ribs, Mac & Cheese, Fried Chicken, Apple Pie), and **Thailand** with authentic nutritional breakdowns.
 - **Bilingual Interface**: Seamlessly switch between **English** and **Thai** across the entire UI.
 - **Offline Data Persistence**: Built-in **Room Database** to log daily meals, track calorie goals, and browse food history offline.
 - **Material 3 Design**: Modern, responsive UI with circular nutrient rings, macro progress bars, and high-contrast typography.

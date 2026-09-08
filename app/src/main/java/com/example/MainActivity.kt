@@ -13,18 +13,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.outlined.CameraAlt
-import androidx.compose.material.icons.outlined.History
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -91,67 +80,7 @@ fun FoodCalorieApp(viewModel: FoodViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.navigationBars,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        bottomBar = {
-            // Hide bottom bar when inside camera or analysis result screen
-            if (analysisState !is AnalysisState.Success && currentScreen != 1) {
-                NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ) {
-                    NavigationBarItem(
-                        selected = currentScreen == 0,
-                        onClick = { viewModel.navigateTo(0) },
-                        icon = {
-                            Icon(
-                                if (currentScreen == 0) Icons.Filled.Home else Icons.Outlined.Home,
-                                contentDescription = AppStrings.navToday(currentLanguage)
-                            )
-                        },
-                        label = { Text(AppStrings.navToday(currentLanguage), fontWeight = if (currentScreen == 0) FontWeight.Bold else FontWeight.Normal) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primaryContainer
-                        ),
-                        modifier = Modifier.testTag("nav_tab_dashboard")
-                    )
-
-                    NavigationBarItem(
-                        selected = currentScreen == 1,
-                        onClick = { viewModel.navigateTo(1) },
-                        icon = {
-                            Icon(
-                                if (currentScreen == 1) Icons.Filled.CameraAlt else Icons.Outlined.CameraAlt,
-                                contentDescription = AppStrings.navScan(currentLanguage)
-                            )
-                        },
-                        label = { Text(AppStrings.navScan(currentLanguage), fontWeight = if (currentScreen == 1) FontWeight.Bold else FontWeight.Normal) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primaryContainer
-                        ),
-                        modifier = Modifier.testTag("nav_tab_camera")
-                    )
-
-                    NavigationBarItem(
-                        selected = currentScreen == 2,
-                        onClick = { viewModel.navigateTo(2) },
-                        icon = {
-                            Icon(
-                                if (currentScreen == 2) Icons.Filled.History else Icons.Outlined.History,
-                                contentDescription = AppStrings.navHistory(currentLanguage)
-                            )
-                        },
-                        label = { Text(AppStrings.navHistory(currentLanguage), fontWeight = if (currentScreen == 2) FontWeight.Bold else FontWeight.Normal) },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primaryContainer
-                        ),
-                        modifier = Modifier.testTag("nav_tab_history")
-                    )
-                }
-            }
-        }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         AnimatedContent(
             targetState = analysisState,
@@ -187,6 +116,7 @@ fun FoodCalorieApp(viewModel: FoodViewModel) {
                             language = currentLanguage,
                             onToggleLanguage = { LanguageManager.toggleLanguage() },
                             onOpenScanner = { viewModel.navigateTo(1) },
+                            onOpenHistory = { viewModel.navigateTo(2) },
                             onSelectEntry = { viewModel.showEntryDetail(it) },
                             onDeleteEntry = { viewModel.deleteEntry(it) },
                             onUpdateGoal = { viewModel.setDailyGoal(it) }
@@ -204,6 +134,7 @@ fun FoodCalorieApp(viewModel: FoodViewModel) {
                         2 -> FoodHistoryScreen(
                             entries = entries,
                             language = currentLanguage,
+                            onBack = { viewModel.navigateTo(0) },
                             onSelectEntry = { viewModel.showEntryDetail(it) },
                             onDeleteEntry = { viewModel.deleteEntry(it) }
                         )

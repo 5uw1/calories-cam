@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,8 +28,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.WbSunny
@@ -38,7 +41,11 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -77,6 +84,7 @@ fun FoodDashboardScreen(
     language: AppLanguage = AppLanguage.EN,
     onToggleLanguage: () -> Unit = {},
     onOpenScanner: () -> Unit,
+    onOpenHistory: () -> Unit = {},
     onSelectEntry: (FoodEntry) -> Unit,
     onDeleteEntry: (FoodEntry) -> Unit,
     onUpdateGoal: (Int) -> Unit
@@ -91,6 +99,7 @@ fun FoodDashboardScreen(
     val todayDateString = remember(language) { todayDateFormat.format(Date()) }
 
     var showGoalDialog by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
 
     // Filter today's entries
     val todayEntries = remember(entries) {
@@ -111,11 +120,12 @@ fun FoodDashboardScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 100.dp),
+                .background(MaterialTheme.colorScheme.background)
+                .statusBarsPadding(),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 110.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Header
+            // Header with App Title and Menu
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -125,9 +135,12 @@ fun FoodDashboardScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = AppStrings.appTitle(language),
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.primary
+                            style = MaterialTheme.typography.displaySmall.copy(
+                                fontSize = 32.sp,
+                                lineHeight = 36.sp
+                            ),
+                            fontWeight = FontWeight.Black,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
                             text = todayDateString,
@@ -136,41 +149,78 @@ fun FoodDashboardScreen(
                         )
                     }
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        // Language Switcher Toggle Pill
-                        Surface(
-                            onClick = onToggleLanguage,
-                            shape = RoundedCornerShape(20.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            tonalElevation = 2.dp
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = if (language == AppLanguage.EN) "🇺🇸 EN" else "🇹🇭 TH",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                        }
-
-                        // Calorie target settings button
+                    // Single Overflow Menu button containing History, Settings, Language
+                    Box {
                         IconButton(
-                            onClick = { showGoalDialog = true },
+                            onClick = { showMenu = true },
                             modifier = Modifier
-                                .size(40.dp)
-                                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                                .size(44.dp)
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f), CircleShape)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Tune,
-                                contentDescription = AppStrings.setGoalTitle(language),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "Menu",
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            // History
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        AppStrings.menuHistory(language),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.History, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    onOpenHistory()
+                                }
+                            )
+
+                            // Daily Goal Settings
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        AppStrings.menuSettings(language),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Tune, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    showGoalDialog = true
+                                }
+                            )
+
+                            // Switch Language
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        AppStrings.menuLanguage(language),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Language, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    onToggleLanguage()
+                                }
                             )
                         }
                     }
@@ -190,29 +240,21 @@ fun FoodDashboardScreen(
             }
 
             // Meals header
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            if (todayEntries.isNotEmpty()) {
+                item {
                     Text(
                         text = AppStrings.todayFoodLog(todayEntries.size, language),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
                     )
                 }
             }
 
             if (todayEntries.isEmpty()) {
                 item {
-                    EmptyFoodLogCard(
-                        language = language,
-                        onOpenScanner = onOpenScanner
-                    )
+                    EmptyFoodLogCard(language = language)
                 }
             } else {
                 // Group by Meal Type
@@ -261,17 +303,24 @@ fun FoodDashboardScreen(
             }
         }
 
-        // Floating Action Button to scan food
-        ExtendedFloatingActionButton(
+        // Prominent Floating Action Button (FAB) for Scan Food (Icon only - Large primary action)
+        FloatingActionButton(
             onClick = onOpenScanner,
-            icon = { Icon(Icons.Default.CameraAlt, contentDescription = null) },
-            text = { Text(AppStrings.openScanner(language), fontWeight = FontWeight.Bold) },
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
+            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 8.dp, pressedElevation = 12.dp),
+            shape = CircleShape,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 20.dp)
-        )
+                .padding(bottom = 24.dp)
+                .size(76.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.CameraAlt,
+                contentDescription = AppStrings.navScan(language),
+                modifier = Modifier.size(38.dp)
+            )
+        }
     }
 
     // Goal adjustment dialog
@@ -320,40 +369,24 @@ fun FoodDashboardScreen(
 
 @Composable
 fun MealSectionHeader(mealType: String, totalCalories: Int) {
-    val icon = when {
-        mealType.contains("Breakfast", ignoreCase = true) || mealType.contains("เช้า") -> Icons.Default.WbSunny
-        mealType.contains("Lunch", ignoreCase = true) || mealType.contains("เที่ยง") -> Icons.Default.LunchDining
-        mealType.contains("Dinner", ignoreCase = true) || mealType.contains("เย็น") -> Icons.Default.Nightlight
-        else -> Icons.Default.Fastfood
-    }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(top = 8.dp, bottom = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            Text(
-                text = mealType,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
+        Text(
+            text = mealType,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
         Text(
             text = "$totalCalories kcal",
             style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.primary
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -385,15 +418,15 @@ fun FoodLogItemCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(20.dp))
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Food Thumbnail
@@ -402,28 +435,28 @@ fun FoodLogItemCard(
                     bitmap = bitmap.asImageBitmap(),
                     contentDescription = displayName,
                     modifier = Modifier
-                        .size(60.dp)
-                        .clip(RoundedCornerShape(12.dp)),
+                        .size(54.dp)
+                        .clip(RoundedCornerShape(14.dp)),
                     contentScale = ContentScale.Crop
                 )
             } else {
                 Box(
                     modifier = Modifier
-                        .size(60.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.primaryContainer),
+                        .size(54.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Restaurant,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(14.dp))
 
             // Food info
             Column(modifier = Modifier.weight(1f)) {
@@ -438,49 +471,39 @@ fun FoodLogItemCard(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(modifier = Modifier.height(2.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(
-                        text = "P: ${entry.protein.toInt()}g",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "C: ${entry.carbs.toInt()}g",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "F: ${entry.fat.toInt()}g",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             }
 
             // Calories badge
-            Column(horizontalAlignment = Alignment.End) {
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            ) {
                 Text(
                     text = "${entry.calories}",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 22.sp
+                    ),
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
+                Spacer(modifier = Modifier.width(3.dp))
                 Text(
                     text = "kcal",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 2.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.width(4.dp))
-
-            IconButton(onClick = onDelete) {
+            IconButton(
+                onClick = onDelete,
+                modifier = Modifier.size(32.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = AppStrings.deleteItem(language),
-                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.6f),
-                    modifier = Modifier.size(20.dp)
+                    tint = MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier.size(18.dp)
                 )
             }
         }
@@ -489,59 +512,49 @@ fun FoodLogItemCard(
 
 @Composable
 fun EmptyFoodLogCard(
-    language: AppLanguage = AppLanguage.EN,
-    onOpenScanner: () -> Unit
+    language: AppLanguage = AppLanguage.EN
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
         )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(28.dp),
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
                 modifier = Modifier
-                    .size(68.dp)
+                    .size(56.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.CameraAlt,
+                    imageVector = Icons.Default.Fastfood,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(34.dp)
+                    modifier = Modifier.size(28.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = AppStrings.emptyLogTitle(language),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = AppStrings.emptyLogSubtitle(language),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(18.dp))
-            Button(
-                onClick = onOpenScanner,
-                shape = RoundedCornerShape(14.dp)
-            ) {
-                Icon(Icons.Default.CameraAlt, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(AppStrings.openScanner(language))
-            }
         }
     }
 }

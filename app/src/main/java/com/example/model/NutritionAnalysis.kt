@@ -233,7 +233,7 @@ object FoodSamples {
             mealType = "มื้อเย็น",
             healthTip = "ไขมันดีสูงจากอะโวคาโด ช่วยบำรุงหัวใจ ใยอาหารสูงมากและโปรตีนลีน เหมาะกับคนรักสุขภาพ",
             ingredients = listOf("อกไก่ย่างฉีก", "อะโวคาโดหั่นเต๋า", "ผักสลัดไฮโดรโปนิกส์", "มะเขือเทศราชินี", "น้ำสลัดบัลซามิก"),
-            cuisine = "International"
+            cuisine = "Thai"
         ),
         NutritionAnalysis(
             foodName = "โจ๊กหมูใส่ไข่",
@@ -253,6 +253,255 @@ object FoodSamples {
         )
     )
 
-    // All sample dishes combining Swiss and other popular options
-    val sampleDishes = swissDishes + thaiDishes
+    val italianDishes = listOf(
+        NutritionAnalysis(
+            foodName = "พิซซ่ามาเกริต้า",
+            foodNameEn = "Pizza Margherita",
+            calories = 620,
+            protein = 24.0f,
+            carbs = 76.0f,
+            fat = 22.5f,
+            fiber = 3.8f,
+            sugar = 4.2f,
+            sodium = 1120,
+            portionSize = "1 ถาดบุคคล (300g)",
+            mealType = "มื้อเย็น",
+            healthTip = "พิซซ่าต้นตำรับจากเมืองเนเปิลส์ ใช้มอสซาเรลล่าสด มะเขือเทศ San Marzano อุดมด้วยไลโคปีน และใบโหระพาอิตาเลียนสด",
+            ingredients = listOf("แป้งพิซซ่าโฮมเมด", "มอสซาเรลล่าชีสสด", "ซอสมะเขือเทศ San Marzano", "น้ำมันมะกอก Extra Virgin", "ใบโหระพาอิตาเลียน (Basil)"),
+            cuisine = "Italian"
+        ),
+        NutritionAnalysis(
+            foodName = "สปาเก็ตตี้คาโบนาร่าแท้",
+            foodNameEn = "Authentic Spaghetti Carbonara",
+            calories = 580,
+            protein = 26.5f,
+            carbs = 62.0f,
+            fat = 24.0f,
+            fiber = 2.4f,
+            sugar = 2.1f,
+            sodium = 890,
+            portionSize = "1 จาน (280g)",
+            mealType = "มื้อเที่ยง",
+            healthTip = "สูตรดั้งเดิมจากกรุงโรม ไม่ใส่ครีม ใช้ความมันและโปรตีนจากไข่แดง ชีส Pecorino Romano และเนื้อหมู Guanciale รสชาติเข้มข้นสไตล์อิตาเลียนแท้",
+            ingredients = listOf("เส้นสปาเก็ตตี้ Al Dente", "ไข่แดงสด", "ชีส Pecorino Romano / Parmigiano", "เนื้อหมู Guanciale ทอดกรอบ", "พริกไทยดำบดสด"),
+            cuisine = "Italian"
+        ),
+        NutritionAnalysis(
+            foodName = "ลาซานญ่าเนื้ออบชีส",
+            foodNameEn = "Beef Lasagna Bolognese",
+            calories = 650,
+            protein = 36.0f,
+            carbs = 54.0f,
+            fat = 31.0f,
+            fiber = 3.5f,
+            sugar = 6.0f,
+            sodium = 980,
+            portionSize = "1 ชิ้นใหญ่ (320g)",
+            mealType = "มื้อเย็น",
+            healthTip = "โปรตีนสูงและธาตุเหล็กจากซอสเนื้อ Bolognese สลับชั้นด้วยพาสต้า ซอสเบชาเมล และพาร์มีซานชีสอบจนหอมกรุ่น",
+            ingredients = listOf("แผ่นลาซานญ่า", "เนื้อบดตุ๋นซอสมะเขือเทศ Bolognese", "ซอสเบชาเมล (Bechamel)", "พาร์มีซานชีส", "มอสซาเรลล่าชีส"),
+            cuisine = "Italian"
+        ),
+        NutritionAnalysis(
+            foodName = "ริซอตโต้เห็ดพอร์ชินี",
+            foodNameEn = "Porcini Mushroom Risotto",
+            calories = 440,
+            protein = 11.5f,
+            carbs = 64.0f,
+            fat = 14.5f,
+            fiber = 4.2f,
+            sugar = 2.5f,
+            sodium = 680,
+            portionSize = "1 จาน (290g)",
+            mealType = "มื้อค่ำ",
+            healthTip = "ข้าว Carnaroli หุงกับน้ำสต๊อกผักและเห็ดพอร์ชินี อุดมด้วยเบต้ากลูแคนและวิตามินดี ละมุนด้วยเนยและพาร์มีซานชีส",
+            ingredients = listOf("ข้าวริซอตโต้ Carnaroli", "เห็ดพอร์ชินีแห้งและสด", "ไวน์ขาวอิตาลี", "น้ำสต๊อกผัก", "พาร์มีซานชีส", "เนยสด"),
+            cuisine = "Italian"
+        ),
+        NutritionAnalysis(
+            foodName = "ทิรามิสุอิตาเลียน",
+            foodNameEn = "Classic Italian Tiramisu",
+            calories = 360,
+            protein = 7.0f,
+            carbs = 38.0f,
+            fat = 19.5f,
+            fiber = 1.2f,
+            sugar = 24.0f,
+            sodium = 110,
+            portionSize = "1 ชิ้น (130g)",
+            mealType = "ของว่าง",
+            healthTip = "ของหวานเลื่องชื่อจากแคว้นเวเนโต มาสคาร์โปเนชีสเนียนนุ่ม ขนมปังเลดี้ฟิงเกอร์ชุบกาแฟเอสเพรสโซเข้มข้น โรยผงโกโก้แท้",
+            ingredients = listOf("มาสคาร์โปเนชีส", "เลดี้ฟิงเกอร์ (Savoiardi)", "กาแฟเอสเพรสโซเข้มข้น", "ไข่สด", "ผงโกโก้แท้ไร้น้ำตาล"),
+            cuisine = "Italian"
+        )
+    )
+
+    val frenchDishes = listOf(
+        NutritionAnalysis(
+            foodName = "เนื้อตุ๋นไวน์แดงสไตล์เบอร์กันดี",
+            foodNameEn = "Beef Bourguignon",
+            calories = 540,
+            protein = 42.0f,
+            carbs = 16.0f,
+            fat = 32.0f,
+            fiber = 3.6f,
+            sugar = 4.0f,
+            sodium = 780,
+            portionSize = "1 จาน (340g)",
+            mealType = "มื้อเย็น",
+            healthTip = "อาหารคลาสสิกฝรั่งเศส เนื้อวัวตุ๋นช้าๆ ในไวน์แดง Pinot Noir นานหลายชั่วโมง เนื้อนุ่มละลายในปาก โปรตีนสูงและอุดมด้วยคอลลาเจน",
+            ingredients = listOf("เนื้อวัวสันคอตุ๋น", "ไวน์แดงเบอร์กันดี", "เห็ดแชมปิญอง", "หอมมุก (Pearl onions)", "แครอทและเบคอนชิ้น", "สมุนไพร Bouquet garni"),
+            cuisine = "French"
+        ),
+        NutritionAnalysis(
+            foodName = "ซุปหัวหอมสไตล์ปารีส อบชีส",
+            foodNameEn = "French Onion Soup (Soupe à l'oignon)",
+            calories = 380,
+            protein = 16.5f,
+            carbs = 29.0f,
+            fat = 21.0f,
+            fiber = 3.2f,
+            sugar = 8.5f,
+            sodium = 870,
+            portionSize = "1 ชาม (320ml)",
+            mealType = "มื้อค่ำ",
+            healthTip = "หัวหอมผัดคาราเมลจนหวานธรรมชาติ ต้มในน้ำซุปเนื้อเคี่ยวเข้มข้น ปิดหน้าด้วยขนมปังบาแก็ตต์และชีสกรูว์แยร์อบเกรียม อบอุ่นสบายท้อง",
+            ingredients = listOf("หอมใหญ่ผัดคาราเมล", "น้ำสต๊อกเนื้อเข้มข้น", "ขนมปังฝรั่งเศสบาแก็ตต์", "ชีส Gruyère / Comté อบเยิ้ม", "เนยสด"),
+            cuisine = "French"
+        ),
+        NutritionAnalysis(
+            foodName = "คีชลอแรน (พายไข่อบเบคอน)",
+            foodNameEn = "Quiche Lorraine",
+            calories = 490,
+            protein = 19.0f,
+            carbs = 32.0f,
+            fat = 31.5f,
+            fiber = 1.8f,
+            sugar = 2.4f,
+            sodium = 690,
+            portionSize = "1 ชิ้น (180g)",
+            mealType = "มื้อเช้า",
+            healthTip = "อาหารชื่อดังจากแคว้นลอแรน พายแป้งกรอบสอดไส้คัสตาร์ดไข่ ครีมสด และเบคอนรมควัน ให้พลังงานและโปรตีนสูง เหมาะกับมื้อสาย",
+            ingredients = listOf("แป้งพายร่วน (Shortcrust pastry)", "ไข่ไก่สดและครีมสด (Crème fraîche)", "เบคอนรมควันชิ้นหนา (Lardons)", "ชีสเอมเมนทัล", "ลูกจันทน์เทศ"),
+            cuisine = "French"
+        ),
+        NutritionAnalysis(
+            foodName = "สตูว์ผักโพรวองซ์ (ราตาตูย)",
+            foodNameEn = "Ratatouille Provençale",
+            calories = 185,
+            protein = 4.5f,
+            carbs = 22.0f,
+            fat = 9.0f,
+            fiber = 6.8f,
+            sugar = 10.5f,
+            sodium = 360,
+            portionSize = "1 จาน (280g)",
+            mealType = "มื้อเย็น",
+            healthTip = "เมนูผักสุขภาพทางตอนใต้ของฝรั่งเศส แคลอรี่ต่ำมาก ใยอาหารและสารต้านอนุมูลอิสระสูง ปรุงด้วยน้ำมันมะกอกและสมุนไพร Herbes de Provence",
+            ingredients = listOf("ซูกินี", "มะเขือม่วง", "พริกหวาน 3 สี", "มะเขือเทศสุกฉ่ำ", "น้ำมันมะกอกบริสุทธิ์", "สมุนไพร Herbes de Provence"),
+            cuisine = "French"
+        ),
+        NutritionAnalysis(
+            foodName = "ครัวซองต์เนยสดฝรั่งเศส",
+            foodNameEn = "French Butter Croissant",
+            calories = 270,
+            protein = 5.2f,
+            carbs = 28.5f,
+            fat = 15.0f,
+            fiber = 1.5f,
+            sugar = 4.0f,
+            sodium = 280,
+            portionSize = "1 ชิ้น (65g)",
+            mealType = "มื้อเช้า",
+            healthTip = "ครัวซองต์เนยแท้จากฝรั่งเศส แป้งกรอบนอกนุ่มในเป็นชั้นฟู ทานคู่กับกาแฟดำร้อนเพื่อความสดชื่นยามเช้า",
+            ingredients = listOf("แป้งสาลีฝรั่งเศส", "เนยสดฝรั่งเศส (Beurre de Tourage)", "ยีสต์ธรรมชาติ", "นมสด", "เกลือทะเล"),
+            cuisine = "French"
+        )
+    )
+
+    val americanDishes = listOf(
+        NutritionAnalysis(
+            foodName = "ดับเบิ้ลชีสเบอร์เกอร์คลาสสิก",
+            foodNameEn = "Classic Double Cheeseburger",
+            calories = 680,
+            protein = 38.0f,
+            carbs = 44.0f,
+            fat = 37.0f,
+            fiber = 2.8f,
+            sugar = 7.0f,
+            sodium = 1180,
+            portionSize = "1 ชิ้น (260g)",
+            mealType = "มื้อเที่ยง",
+            healthTip = "เบอร์เกอร์เนื้อย่างฉ่ำ 2 ชิ้น พร้อมเชดดาร์ชีสและผักสด ให้โปรตีนและพลังงานสูง แนะนำทานคู่กับน้ำเปล่าแทนน้ำอัดลมเพื่อคุมน้ำตาล",
+            ingredients = listOf("ขนมปังบริออชเบอร์เกอร์", "เนื้อวัวบดย่าง 2 ชิ้น", "อเมริกันเชดดาร์ชีส", "ผักกาดแก้วและมะเขือเทศ", "แตงกวาดองและซอสเบอร์เกอร์"),
+            cuisine = "American"
+        ),
+        NutritionAnalysis(
+            foodName = "ซี่โครงหมูบาร์บีคิวรมควัน",
+            foodNameEn = "Texas BBQ Smoked Pork Ribs",
+            calories = 720,
+            protein = 46.0f,
+            carbs = 28.0f,
+            fat = 45.0f,
+            fiber = 1.2f,
+            sugar = 22.0f,
+            sodium = 1240,
+            portionSize = "ครึ่งแผง (350g)",
+            mealType = "มื้อเย็น",
+            healthTip = "สไตล์เท็กซัส รมควันด้วยไม้ฮิกคอรีจนเนื้อนุ่มร่อนจากกระดูก โปรตีนสูงมาก ซอสบาร์บีคิวมีน้ำตาลและโซเดียม ควรรับประทานร่วมกับโคลสลอว์ผักสด",
+            ingredients = listOf("ซี่โครงหมูแร็ค", "เครื่องเทศ Dry Rub สไตล์เท็กซัส", "ซอสบาร์บีคิวรมควัน", "น้ำส้มสายชูแอปเปิ้ลไซเดอร์"),
+            cuisine = "American"
+        ),
+        NutritionAnalysis(
+            foodName = "แมคแอนด์ชีส (มักกะโรนีอบชีส)",
+            foodNameEn = "Baked Macaroni and Cheese",
+            calories = 520,
+            protein = 19.5f,
+            carbs = 56.0f,
+            fat = 24.5f,
+            fiber = 2.2f,
+            sugar = 5.0f,
+            sodium = 860,
+            portionSize = "1 ถ้วยอบ (250g)",
+            mealType = "มื้อเที่ยง",
+            healthTip = "อาหารคอมฟอร์ตฟู้ดยอดนิยมของอเมริกา พาสต้ามักกะโรนีคลุกเคล้าซอสชีสเชดดาร์เข้มข้น แคลเซียมสูง ให้พลังงานคาร์โบไฮเดรตเต็มเปี่ยม",
+            ingredients = listOf("พาสต้ามักกะโรนีข้อศอก", "ชาร์ปเชดดาร์ชีส", "มอสซาเรลล่าชีส", "นมสดและเนย", "เกล็ดขนมปังพังโกะกรอบ"),
+            cuisine = "American"
+        ),
+        NutritionAnalysis(
+            foodName = "ไก่ทอดกรอบคลาสสิก",
+            foodNameEn = "Southern Crispy Fried Chicken",
+            calories = 590,
+            protein = 41.0f,
+            carbs = 26.0f,
+            fat = 34.0f,
+            fiber = 1.4f,
+            sugar = 0.5f,
+            sodium = 1050,
+            portionSize = "2 ชิ้น (สะโพก + น่อง)",
+            mealType = "มื้อเที่ยง",
+            healthTip = "สไตล์ทางใต้ของสหรัฐฯ หมักบัตเตอร์มิลค์และเครื่องเทศ 11 ชนิด หนังกรอบนอกนุ่มชุ่มฉ่ำใน โปรตีนสูง",
+            ingredients = listOf("ไก่สดหมักบัตเตอร์มิลค์", "แป้งสาลีผสมปาปริก้า กระเทียม พริกไทย", "น้ำมันพืชสำหรับทอด"),
+            cuisine = "American"
+        ),
+        NutritionAnalysis(
+            foodName = "พายแอปเปิ้ลอเมริกัน",
+            foodNameEn = "Traditional American Apple Pie",
+            calories = 340,
+            protein = 3.5f,
+            carbs = 48.0f,
+            fat = 15.0f,
+            fiber = 3.5f,
+            sugar = 25.0f,
+            sodium = 240,
+            portionSize = "1 ชิ้น (140g)",
+            mealType = "ของว่าง",
+            healthTip = "ของหวานสัญลักษณ์ประจำชาติอเมริกา แอปเปิ้ล Granny Smith อบคลุกเคล้าอบเชยและน้ำตาลทรายแดง แป้งพายเนยกรอบร่วน อุดมด้วยสารต้านอนุมูลอิสระจากอบเชย",
+            ingredients = listOf("แอปเปิ้ลเขียว Granny Smith", "แป้งพายเนยอบทอง", "ผงอบเชย (Cinnamon)", "ลูกจันทน์เทศ", "น้ำตาลทรายแดง"),
+            cuisine = "American"
+        )
+    )
+
+    // All sample dishes combining Swiss, Thai, Italian, French, American & popular options
+    val sampleDishes = swissDishes + thaiDishes + italianDishes + frenchDishes + americanDishes
 }

@@ -51,31 +51,22 @@ fun MacroItem(
 ) {
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(color.copy(alpha = 0.12f))
-            .padding(vertical = 10.dp, horizontal = 12.dp),
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+            .padding(vertical = 12.dp, horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(8.dp)
-                    .clip(CircleShape)
-                    .background(color)
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "${String.format("%.1f", value)}$unit",
-            style = MaterialTheme.typography.titleMedium,
+            text = "${value.toInt()}$unit",
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = color
         )
     }
 }
@@ -96,90 +87,80 @@ fun CalorieSummaryCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
         )
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Big Hero Calorie Progress Ring
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(170.dp)
+                    .padding(8.dp)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.LocalFireDepartment,
-                            contentDescription = "Calories",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = AppStrings.dailyEnergy(language),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(verticalAlignment = Alignment.Bottom) {
-                        Text(
-                            text = "$consumedCalories",
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = " / $goalCalories kcal",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)
-                        )
-                    }
-                    Text(
-                        text = if (consumedCalories <= goalCalories) {
-                            AppStrings.remainingCalories(remaining, language)
-                        } else {
-                            AppStrings.exceededCalories(consumedCalories - goalCalories, language)
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = if (consumedCalories <= goalCalories) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                // Background Track
+                CircularProgressIndicator(
+                    progress = { 1f },
+                    modifier = Modifier.size(150.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
+                    strokeWidth = 14.dp,
+                    strokeCap = StrokeCap.Round
+                )
+                // Active Progress Arc
+                CircularProgressIndicator(
+                    progress = { animatedProgress },
+                    modifier = Modifier.size(150.dp),
+                    color = if (consumedCalories <= goalCalories) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                    strokeWidth = 14.dp,
+                    strokeCap = StrokeCap.Round
+                )
 
-                // Circular Progress
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.size(80.dp)) {
-                    CircularProgressIndicator(
-                        progress = { 1f },
-                        modifier = Modifier.size(80.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
-                        strokeWidth = 8.dp,
-                        strokeCap = StrokeCap.Round
-                    )
-                    CircularProgressIndicator(
-                        progress = { animatedProgress },
-                        modifier = Modifier.size(80.dp),
-                        color = if (consumedCalories <= goalCalories) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                        strokeWidth = 8.dp,
-                        strokeCap = StrokeCap.Round
+                // Large numbers inside ring
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "$consumedCalories",
+                        style = MaterialTheme.typography.displaySmall.copy(
+                            fontSize = 38.sp,
+                            lineHeight = 42.sp
+                        ),
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "${(progress * 100).toInt()}%",
+                        text = "/ $goalCalories kcal",
                         style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // Macro row
+            // Minimal Remaining status
+            Text(
+                text = if (consumedCalories <= goalCalories) {
+                    AppStrings.remainingCalories(remaining, language)
+                } else {
+                    AppStrings.exceededCalories(consumedCalories - goalCalories, language)
+                },
+                style = MaterialTheme.typography.titleSmall,
+                color = if (consumedCalories <= goalCalories) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 3 Clean Macro Pills
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 MacroItem(
                     label = AppStrings.protein(language),
