@@ -39,6 +39,9 @@ import com.example.ui.theme.MyApplicationTheme
 import com.example.util.AppLanguage
 import com.example.util.AppStrings
 import com.example.util.LanguageManager
+import com.example.util.ThemeManager
+import com.example.util.ThemeMode
+import androidx.compose.foundation.isSystemInDarkTheme
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -48,7 +51,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyApplicationTheme {
+            val themeMode by ThemeManager.themeMode.collectAsStateWithLifecycle()
+            MyApplicationTheme(themeMode = themeMode) {
                 FoodCalorieApp(viewModel = viewModel)
             }
         }
@@ -63,6 +67,13 @@ fun FoodCalorieApp(viewModel: FoodViewModel) {
     val calorieGoal by viewModel.dailyCalorieGoal.collectAsStateWithLifecycle()
     val selectedDetailEntry by viewModel.selectedDetailEntry.collectAsStateWithLifecycle()
     val currentLanguage by LanguageManager.currentLanguage.collectAsStateWithLifecycle()
+    val themeMode by ThemeManager.themeMode.collectAsStateWithLifecycle()
+    val systemInDark = isSystemInDarkTheme()
+    val isDarkMode = when (themeMode) {
+        ThemeMode.SYSTEM -> systemInDark
+        ThemeMode.DARK -> true
+        ThemeMode.LIGHT -> false
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -114,7 +125,9 @@ fun FoodCalorieApp(viewModel: FoodViewModel) {
                             entries = entries,
                             goalCalories = calorieGoal,
                             language = currentLanguage,
+                            isDarkMode = isDarkMode,
                             onToggleLanguage = { LanguageManager.toggleLanguage() },
+                            onToggleTheme = { ThemeManager.toggleTheme() },
                             onOpenScanner = { viewModel.navigateTo(1) },
                             onOpenHistory = { viewModel.navigateTo(2) },
                             onSelectEntry = { viewModel.showEntryDetail(it) },

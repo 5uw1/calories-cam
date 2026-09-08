@@ -22,6 +22,11 @@ object AppStrings {
         AppLanguage.TH -> "English (EN)"
     }
 
+    fun menuTheme(isDark: Boolean, lang: AppLanguage): String = when (lang) {
+        AppLanguage.EN -> if (isDark) "Light Mode" else "Dark Mode"
+        AppLanguage.TH -> if (isDark) "โหมดสว่าง" else "โหมดมืด"
+    }
+
     // Navigation
     fun navToday(lang: AppLanguage): String = when (lang) {
         AppLanguage.EN -> "Today"

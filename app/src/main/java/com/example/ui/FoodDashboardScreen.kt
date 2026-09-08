@@ -27,6 +27,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Language
@@ -73,6 +75,7 @@ import com.example.model.FoodEntry
 import com.example.ui.components.CalorieSummaryCard
 import com.example.util.AppLanguage
 import com.example.util.AppStrings
+import com.example.util.ThemeMode
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -82,7 +85,9 @@ fun FoodDashboardScreen(
     entries: List<FoodEntry>,
     goalCalories: Int,
     language: AppLanguage = AppLanguage.EN,
+    isDarkMode: Boolean = false,
     onToggleLanguage: () -> Unit = {},
+    onToggleTheme: () -> Unit = {},
     onOpenScanner: () -> Unit,
     onOpenHistory: () -> Unit = {},
     onSelectEntry: (FoodEntry) -> Unit,
@@ -220,6 +225,28 @@ fun FoodDashboardScreen(
                                 onClick = {
                                     showMenu = false
                                     onToggleLanguage()
+                                }
+                            )
+
+                            // Toggle Dark / Light Theme
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        AppStrings.menuTheme(isDarkMode, language),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = if (isDarkMode) Icons.Default.LightMode else Icons.Default.DarkMode,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    onToggleTheme()
                                 }
                             )
                         }

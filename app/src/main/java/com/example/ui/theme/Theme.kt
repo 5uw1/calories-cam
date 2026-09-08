@@ -9,6 +9,8 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.example.util.ThemeManager
+import com.example.util.ThemeMode
 
 private val DarkColorScheme = darkColorScheme(
     primary = OrangePrimaryDark,
@@ -47,7 +49,12 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
+    darkTheme: Boolean = when (themeMode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.DARK -> true
+        ThemeMode.LIGHT -> false
+    },
     dynamicColor: Boolean = false, // Keep our cohesive appetizing brand colors
     content: @Composable () -> Unit
 ) {
