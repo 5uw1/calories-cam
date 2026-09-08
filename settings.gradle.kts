@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Food Calorie"
+rootProject.name = "CalorieCam"
 
 include(":app")

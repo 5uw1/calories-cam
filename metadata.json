@@ -1,6 +1,6 @@
 {
-  "name": "Food Calorie",
-  "description": "ถ่ายรูปอาหาร คำนวณสารอาหารและแคลอรี่ด้วย AI (AI Food Calorie and Nutrition Scanner)",
+  "name": "CalorieCam",
+  "description": "AI food camera scanner and calorie tracker powered by Gemini API and Jetpack Compose",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
