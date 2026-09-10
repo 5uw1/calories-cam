@@ -1,0 +1,71 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Camera/Scanner Reticle Corners in 66dp safe zone (24 to 84) -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M32,28 L26,28 C24.9,28 24,28.9 24,30 L24,36"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeColor="#FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M76,28 L82,28 C83.1,28 84,28.9 84,30 L84,36"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeColor="#FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M24,72 L24,78 C24,79.1 24.9,80 26,80 L32,80"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeColor="#FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M84,72 L84,78 C84,79.1 83.1,80 82,80 L76,80"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeColor="#FFFFFF" />
+
+    <!-- Food Bowl Rim and Base -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,52 C30,65.2 40.8,76 54,76 C67.2,76 78,65.2 78,52 L30,52 Z" />
+    <path
+        android:fillColor="#FFE082"
+        android:pathData="M44,76 L64,76 L66,79 C66,79.6 65.6,80 65,80 L43,80 C42.4,80 42,79.6 42,79 Z" />
+
+    <!-- Healthy salad / leaf atop bowl -->
+    <path
+        android:fillColor="#76FF03"
+        android:pathData="M54,40 C48,40 44,45 44,51 L64,51 C64,45 60,40 54,40 Z" />
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M54,40 C57,43 59,47 59,51 L67,51 C67,46 62,40 54,40 Z" />
+
+    <!-- Calorie / Energy Flame or Star in center -->
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M54,58 C51.8,58 50,59.8 50,62 C50,65 54,68 54,68 C54,68 58,65 58,62 C58,59.8 56.2,58 54,58 Z" />
+    
+    <!-- Steam rising pulses -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M49,35 C48,32 50,30 49,27"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeColor="#FFF9C4" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M59,35 C58,32 60,30 59,27"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeColor="#FFF9C4" />
+</vector>
+

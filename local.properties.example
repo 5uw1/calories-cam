@@ -1,0 +1,4 @@
+# Copy to local.properties and fill in.
+# sdk.dir is written automatically by Android Studio; set it if building from CLI:
+# sdk.dir=/Users/you/Library/Android/sdk
+geminiApiKey=
