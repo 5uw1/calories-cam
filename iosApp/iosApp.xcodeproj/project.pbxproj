@@ -150,7 +150,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\nif [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\nif ! command -v java >/dev/null 2>&1 && [ -d \"$HOME/.jdks/temurin-current/Contents/Home/bin\" ]; then\n  export PATH=\"$HOME/.jdks/temurin-current/Contents/Home/bin:$PATH\"\nfi\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "cd \"$SRCROOT/..\"\nif [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\n# macOS always has a stub /usr/bin/java on PATH even with no real JDK\n# installed, so `command -v java` can't be used to detect this — just\n# unconditionally prefer the JDK ci_post_clone.sh installs when present.\nif [ -d \"$HOME/.jdks/temurin-current/Contents/Home/bin\" ]; then\n  export PATH=\"$HOME/.jdks/temurin-current/Contents/Home/bin:$PATH\"\nfi\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
