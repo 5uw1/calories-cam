@@ -78,6 +78,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.example.model.FoodSamples
 import com.example.model.NutritionAnalysis
+import com.example.model.displayFoodName
 import com.example.util.AppLanguage
 import com.example.util.AppStrings
 import kotlinx.coroutines.Dispatchers
@@ -370,8 +371,7 @@ actual fun FoodCameraScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(filteredDishes) { dish ->
-                    val dishLabel = if (language == AppLanguage.EN && dish.foodNameEn.isNotBlank())
-                        dish.foodNameEn else dish.foodName
+                    val dishLabel = dish.displayFoodName(language)
                     val flagEmoji = when (dish.cuisine) {
                         "Swiss" -> "🇨🇭"; "Italian" -> "🇮🇹"; "French" -> "🇫🇷"
                         "American" -> "🇺🇸"; "Thai" -> "🇹🇭"; else -> "🍽️"

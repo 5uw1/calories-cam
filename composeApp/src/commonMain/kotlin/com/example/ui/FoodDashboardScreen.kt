@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
@@ -69,6 +70,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.model.FoodEntry
+import com.example.model.displayFoodName
 import com.example.platform.ImageCodec
 import com.example.platform.decodeImageBitmap
 import com.example.ui.components.CalorieSummaryCard
@@ -83,7 +85,7 @@ fun FoodDashboardScreen(
     goalCalories: Int,
     language: AppLanguage = AppLanguage.EN,
     isDarkMode: Boolean = false,
-    onToggleLanguage: () -> Unit = {},
+    onSelectLanguage: (AppLanguage) -> Unit = {},
     onToggleTheme: () -> Unit = {},
     onOpenScanner: () -> Unit,
     onOpenHistory: () -> Unit = {},
@@ -92,10 +94,11 @@ fun FoodDashboardScreen(
     onUpdateGoal: (Int) -> Unit
 ) {
     val todayDateString = remember(language) {
-        DateFormat.fullDate(DateFormat.nowMillis(), language == AppLanguage.TH)
+        DateFormat.fullDate(DateFormat.nowMillis(), language)
     }
 
     var showGoalDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
 
     // Filter today's entries
@@ -211,7 +214,7 @@ fun FoodDashboardScreen(
                                 },
                                 onClick = {
                                     showMenu = false
-                                    onToggleLanguage()
+                                    showLanguageDialog = true
                                 }
                             )
 
@@ -379,6 +382,57 @@ fun FoodDashboardScreen(
             }
         )
     }
+
+    // Language picker dialog
+    if (showLanguageDialog) {
+        AlertDialog(
+            onDismissRequest = { showLanguageDialog = false },
+            title = { Text(AppStrings.chooseLanguage(language)) },
+            text = {
+                Column {
+                    AppLanguage.entries.forEach { option ->
+                        val isSelected = option == language
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable {
+                                    onSelectLanguage(option)
+                                    showLanguageDialog = false
+                                }
+                                .background(
+                                    if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                                    else Color.Transparent
+                                )
+                                .padding(horizontal = 12.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(option.flagEmoji, style = MaterialTheme.typography.titleMedium)
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                option.displayName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                modifier = Modifier.weight(1f)
+                            )
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showLanguageDialog = false }) {
+                    Text(AppStrings.close(language))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -422,11 +476,7 @@ fun FoodLogItemCard(
         } else null
     }
 
-    val displayName = if (language == AppLanguage.EN && entry.foodNameEn.isNotBlank()) {
-        entry.foodNameEn
-    } else {
-        entry.foodName
-    }
+    val displayName = entry.displayFoodName(language)
 
     Card(
         modifier = Modifier

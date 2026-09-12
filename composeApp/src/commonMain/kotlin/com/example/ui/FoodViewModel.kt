@@ -6,7 +6,10 @@ import com.example.api.GeminiFoodService
 import com.example.data.FoodRepository
 import com.example.model.FoodEntry
 import com.example.model.NutritionAnalysis
+import com.example.model.displayHealthTip
+import com.example.model.displayIngredients
 import com.example.platform.ImageCodec
+import com.example.util.AppLanguage
 import com.example.util.DateFormat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -79,14 +82,19 @@ class FoodViewModel(
         mealType: String,
         customFoodName: String? = null,
         customCalories: Int? = null,
-        customPortion: String? = null
+        customPortion: String? = null,
+        language: AppLanguage = AppLanguage.EN
     ) {
         viewModelScope.launch {
             val thumbnailBase64 = analysis.imageBytes?.let { ImageCodec.encodeToBase64(it) }
 
+            val healthTip = analysis.displayHealthTip(language)
+            val ingredients = analysis.displayIngredients(language)
+
             val entry = FoodEntry(
                 foodName = customFoodName?.ifBlank { analysis.foodName } ?: analysis.foodName,
                 foodNameEn = analysis.foodNameEn,
+                foodNameDe = analysis.foodNameDe,
                 calories = customCalories ?: analysis.calories,
                 protein = analysis.protein,
                 carbs = analysis.carbs,
@@ -96,8 +104,8 @@ class FoodViewModel(
                 sodium = analysis.sodium,
                 portionSize = customPortion?.ifBlank { analysis.portionSize } ?: analysis.portionSize,
                 mealType = mealType,
-                healthTip = analysis.healthTip,
-                ingredients = analysis.ingredients.joinToString(", "),
+                healthTip = healthTip,
+                ingredients = ingredients.joinToString(", "),
                 imageBase64 = thumbnailBase64,
                 timestamp = DateFormat.nowMillis()
             )

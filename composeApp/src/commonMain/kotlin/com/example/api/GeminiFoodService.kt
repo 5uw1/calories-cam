@@ -50,7 +50,11 @@ class GeminiFoodService(private val client: HttpClient) {
                 fallback.copy(
                     imageBytes = imageBytes,
                     healthTip = fallback.healthTip +
-                        " (โหมดจำลอง: ตั้งค่า Gemini API key เพื่อเปิดใช้งาน AI เต็มรูปแบบ)"
+                        " (โหมดจำลอง: ตั้งค่า Gemini API key เพื่อเปิดใช้งาน AI เต็มรูปแบบ)",
+                    healthTipEn = fallback.healthTipEn +
+                        " (Demo mode: set your Gemini API key to enable full AI analysis.)",
+                    healthTipDe = fallback.healthTipDe +
+                        " (Demo-Modus: Richte deinen Gemini-API-Schlüssel ein, um die vollständige KI-Analyse zu aktivieren.)"
                 )
             )
         }
@@ -69,7 +73,9 @@ class GeminiFoodService(private val client: HttpClient) {
                 return Result.success(
                     fallback.copy(
                         imageBytes = imageBytes,
-                        healthTip = fallback.healthTip + " (API ชั่วคราว: แสดงผลการประมาณการ)"
+                        healthTip = fallback.healthTip + " (API ชั่วคราว: แสดงผลการประมาณการ)",
+                        healthTipEn = fallback.healthTipEn + " (Service temporarily unavailable: showing an estimate.)",
+                        healthTipDe = fallback.healthTipDe + " (Dienst vorübergehend nicht verfügbar: zeigt eine Schätzung.)"
                     )
                 )
             }
@@ -86,7 +92,9 @@ class GeminiFoodService(private val client: HttpClient) {
             Result.success(
                 FoodSamples.sampleDishes.random().copy(
                     imageBytes = imageBytes,
-                    healthTip = "ระบบประมวลผลอัตโนมัติ: ดื่มน้ำและรับประทานผักผลไม้เพิ่มเพื่อสุขภาพที่ดี"
+                    healthTip = "ระบบประมวลผลอัตโนมัติ: ดื่มน้ำและรับประทานผักผลไม้เพิ่มเพื่อสุขภาพที่ดี",
+                    healthTipEn = "Automated estimate: stay hydrated and eat more fruits and vegetables for good health.",
+                    healthTipDe = "Automatische Schätzung: Trinke ausreichend Wasser und iss mehr Obst und Gemüse für eine gute Gesundheit."
                 )
             )
         }
@@ -94,21 +102,28 @@ class GeminiFoodService(private val client: HttpClient) {
 
     private val prompt = """
         คุณคือนักกำหนดอาหารและผู้เชี่ยวชาญด้านโภชนาการ วิเคราะห์ภาพอาหารนี้อย่างละเอียด (สามารถระบุอาหารไทย, สวิส, อิตาเลียน, ฝรั่งเศส, อเมริกัน หรืออาหารนานาชาติอื่นๆ ได้อย่างแม่นยำ):
-        1. ระบุชื่ออาหาร (foodName ภาษาไทย, foodNameEn ภาษาอังกฤษ)
-        2. ประเมินขนาดจานหรือปริมาณ (portionSize เช่น 1 จาน (350g), 1 ถ้วย)
+        ทุกช่องที่มีคู่ En และ De ต้องตอบเป็นภาษาอังกฤษและภาษาเยอรมันตามลำดับ โดยแปลความหมายตรงกับช่องภาษาไทยเสมอ (ห้ามปล่อยว่าง):
+        1. ระบุชื่ออาหาร (foodName ภาษาไทย, foodNameEn ภาษาอังกฤษ, foodNameDe ภาษาเยอรมัน)
+        2. ประเมินขนาดจานหรือปริมาณ (portionSize ภาษาไทย เช่น "1 จาน (350g)", portionSizeEn ภาษาอังกฤษ เช่น "1 plate (350g)", portionSizeDe ภาษาเยอรมัน เช่น "1 Teller (350g)")
         3. คำนวณพลังงานรวม (calories หน่วย kcal เป็นจำนวนเต็ม)
         4. สารอาหารหลัก: โปรตีน (protein หน่วยกรัม), คาร์โบไฮเดรต (carbs หน่วยกรัม), ไขมัน (fat หน่วยกรัม)
         5. สารอาหารย่อย: ใยอาหาร (fiber หน่วยกรัม), น้ำตาล (sugar หน่วยกรัม), โซเดียม (sodium หน่วย mg)
         6. ระบุประเภทมื้ออาหารที่เหมาะสม (mealType: 'มื้อเช้า', 'มื้อเที่ยง', 'มื้อเย็น', หรือ 'ของว่าง')
-        7. คำแนะนำด้านสุขภาพสั้นๆ (healthTip ภาษาไทย)
-        8. รายการส่วนประกอบหลักที่มองเห็นในภาพ (ingredients)
+        7. คำแนะนำด้านสุขภาพสั้นๆ (healthTip ภาษาไทย, healthTipEn ภาษาอังกฤษ, healthTipDe ภาษาเยอรมัน)
+        8. รายการส่วนประกอบหลักที่มองเห็นในภาพ (ingredients เป็นภาษาไทย, ingredientsEn เป็นภาษาอังกฤษ, ingredientsDe เป็นภาษาเยอรมัน โดยทั้งสามรายการต้องมีจำนวนรายการและลำดับตรงกัน)
         9. ระบุสัญชาติอาหาร (cuisine: 'Swiss', 'Italian', 'French', 'American', 'Thai', หรือ 'International')
+        10. ระบุชื่อดั้งเดิมของอาหารในภาษาต้นกำเนิดของอาหารนั้น (originName เช่น อาหารอิตาเลียนใช้ชื่ออิตาเลียนแท้ๆ เช่น "Spaghetti alla Carbonara", อาหารไทยใช้ชื่อภาษาไทย, อาหารสวิสใช้ชื่อภาษาเยอรมัน/สวิสเยอรมัน) พร้อมคำอ่านแบบสัทอักษรง่ายๆ เป็นภาษาอังกฤษในวงเล็บ (pronunciation เช่น "(spah-GET-tee AH-lah kar-boh-NAH-rah)"; หากชื่อดั้งเดิมเป็นภาษาอังกฤษอยู่แล้วให้เว้น pronunciation เป็นค่าว่าง)
 
         ตอบกลับเฉพาะ JSON object ที่มีโครงสร้างดังนี้เท่านั้น (ห้ามใส่ markdown หรือข้อความอื่น):
         {
           "foodName": "ชื่ออาหารภาษาไทย",
           "foodNameEn": "English Name",
+          "foodNameDe": "Deutscher Name",
+          "originName": "Authentic dish name in its origin language",
+          "pronunciation": "(phonetic guide)",
           "portionSize": "1 จาน (350g)",
+          "portionSizeEn": "1 plate (350g)",
+          "portionSizeDe": "1 Teller (350g)",
           "calories": 550,
           "protein": 28.5,
           "carbs": 65.0,
@@ -118,7 +133,11 @@ class GeminiFoodService(private val client: HttpClient) {
           "sodium": 850,
           "mealType": "มื้อเที่ยง",
           "healthTip": "คำแนะนำโภชนาการ",
+          "healthTipEn": "Nutrition advice in English",
+          "healthTipDe": "Ernährungshinweis auf Deutsch",
           "ingredients": ["ส่วนประกอบ 1", "ส่วนประกอบ 2"],
+          "ingredientsEn": ["Ingredient 1", "Ingredient 2"],
+          "ingredientsDe": ["Zutat 1", "Zutat 2"],
           "cuisine": "Italian"
         }
     """.trimIndent()
@@ -170,10 +189,15 @@ class GeminiFoodService(private val client: HttpClient) {
 
         val ingredients = obj["ingredients"]?.jsonArray
             ?.mapNotNull { it.jsonPrimitive.contentOrNull } ?: emptyList()
+        val ingredientsEn = obj["ingredientsEn"]?.jsonArray
+            ?.mapNotNull { it.jsonPrimitive.contentOrNull } ?: emptyList()
+        val ingredientsDe = obj["ingredientsDe"]?.jsonArray
+            ?.mapNotNull { it.jsonPrimitive.contentOrNull } ?: emptyList()
 
         return NutritionAnalysis(
             foodName = str("foodName", "อาหารเพื่อสุขภาพ"),
             foodNameEn = str("foodNameEn", "Healthy Food"),
+            foodNameDe = str("foodNameDe", ""),
             calories = int("calories", 450),
             protein = flt("protein", 20.0),
             carbs = flt("carbs", 50.0),
@@ -182,11 +206,19 @@ class GeminiFoodService(private val client: HttpClient) {
             sugar = flt("sugar", 3.0),
             sodium = int("sodium", 600),
             portionSize = str("portionSize", "1 จาน"),
+            portionSizeEn = str("portionSizeEn", ""),
+            portionSizeDe = str("portionSizeDe", ""),
             mealType = str("mealType", "มื้อเที่ยง"),
             healthTip = str("healthTip", "ควรดื่มน้ำอย่างน้อยวันละ 8 แก้ว และรับประทานอาหารให้หลากหลาย"),
+            healthTipEn = str("healthTipEn", ""),
+            healthTipDe = str("healthTipDe", ""),
             ingredients = ingredients,
+            ingredientsEn = ingredientsEn,
+            ingredientsDe = ingredientsDe,
             imageBytes = imageBytes,
-            cuisine = str("cuisine", "International")
+            cuisine = str("cuisine", "International"),
+            originName = str("originName", ""),
+            pronunciation = str("pronunciation", "")
         )
     }
 }

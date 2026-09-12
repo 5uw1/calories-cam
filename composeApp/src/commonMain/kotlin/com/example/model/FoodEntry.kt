@@ -2,6 +2,7 @@ package com.example.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.util.AppLanguage
 import kotlinx.datetime.Clock
 
 @Entity(tableName = "food_entries")
@@ -10,6 +11,7 @@ data class FoodEntry(
     val id: Long = 0,
     val foodName: String,
     val foodNameEn: String = "",
+    val foodNameDe: String = "",
     val calories: Int,
     val protein: Float, // in grams
     val carbs: Float,   // in grams
@@ -24,3 +26,12 @@ data class FoodEntry(
     val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
     val imageBase64: String? = null // compressed thumbnail for local display
 )
+
+// foodNameEn/foodNameDe are always populated in their language regardless of which
+// language was active when the entry was saved, so history displays correctly after
+// switching languages later. Falls back to the primary (save-time) name when blank.
+fun FoodEntry.displayFoodName(language: AppLanguage): String = when (language) {
+    AppLanguage.EN -> foodNameEn.ifBlank { foodName }
+    AppLanguage.DE -> foodNameDe.ifBlank { foodName }
+    AppLanguage.TH -> foodName
+}

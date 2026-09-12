@@ -56,13 +56,13 @@ fun FoodHistoryScreen(
     onDeleteEntry: (FoodEntry) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
-    val isThai = language == AppLanguage.TH
 
     val filteredEntries = remember(entries, searchQuery) {
         if (searchQuery.isBlank()) entries
         else entries.filter {
             it.foodName.contains(searchQuery, ignoreCase = true) ||
             it.foodNameEn.contains(searchQuery, ignoreCase = true) ||
+            it.foodNameDe.contains(searchQuery, ignoreCase = true) ||
             it.mealType.contains(searchQuery, ignoreCase = true)
         }
     }
@@ -177,7 +177,7 @@ fun FoodHistoryScreen(
                 groupedByDate.forEach { (_, dateEntries) ->
                     val firstEntry = dateEntries.firstOrNull()
                     val dateHeader = if (firstEntry != null) {
-                        DateFormat.dayHeader(firstEntry.timestamp, isThai)
+                        DateFormat.dayHeader(firstEntry.timestamp, language)
                     } else "Meals"
                     val dayCalories = dateEntries.sumOf { it.calories }
 

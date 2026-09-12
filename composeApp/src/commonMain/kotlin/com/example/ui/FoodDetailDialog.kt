@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.model.FoodEntry
+import com.example.model.displayFoodName
 import com.example.platform.ImageCodec
 import com.example.platform.decodeImageBitmap
 import com.example.ui.components.MacroItem
@@ -68,14 +69,10 @@ fun FoodDetailDialog(
     }
 
     val formattedTime = remember(entry.timestamp, language) {
-        DateFormat.timeWithDate(entry.timestamp, language == AppLanguage.TH)
+        DateFormat.timeWithDate(entry.timestamp, language)
     }
 
-    val displayName = if (language == AppLanguage.EN && entry.foodNameEn.isNotBlank()) {
-        entry.foodNameEn
-    } else {
-        entry.foodName
-    }
+    val displayName = entry.displayFoodName(language)
     val displayMeal = AppStrings.translateMeal(entry.mealType, language)
 
     Dialog(onDismissRequest = onDismiss) {
@@ -136,15 +133,6 @@ fun FoodDetailDialog(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                val secondaryName = if (language == AppLanguage.EN) entry.foodName else entry.foodNameEn
-                if (secondaryName.isNotBlank() && secondaryName != displayName) {
-                    Text(
-                        text = secondaryName,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
                 Text(
                     text = "${AppStrings.loggedAt(formattedTime, entry.portionSize, language)}",
                     style = MaterialTheme.typography.bodySmall,

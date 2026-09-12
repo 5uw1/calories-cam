@@ -72,14 +72,16 @@ private fun FoodCalorieApp(viewModel: FoodViewModel, isDarkMode: Boolean) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets.navigationBars,
+        contentWindowInsets = if (analysisState is AnalysisState.Idle && currentScreen == 1)
+            WindowInsets(0, 0, 0, 0) else WindowInsets.navigationBars,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         AnimatedContent(
             targetState = analysisState,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
             label = "ScreenTransition",
-            modifier = Modifier.padding(innerPadding)
+            modifier = if (analysisState is AnalysisState.Idle && currentScreen == 1)
+                Modifier else Modifier.padding(innerPadding)
         ) { state ->
             when (state) {
                 is AnalysisState.Success -> {
@@ -92,7 +94,8 @@ private fun FoodCalorieApp(viewModel: FoodViewModel, isDarkMode: Boolean) {
                                 mealType = mealType,
                                 customFoodName = name,
                                 customCalories = calories,
-                                customPortion = portion
+                                customPortion = portion,
+                                language = currentLanguage
                             )
                         },
                         onRetake = {
@@ -108,7 +111,7 @@ private fun FoodCalorieApp(viewModel: FoodViewModel, isDarkMode: Boolean) {
                             goalCalories = calorieGoal,
                             language = currentLanguage,
                             isDarkMode = isDarkMode,
-                            onToggleLanguage = { LanguageManager.toggleLanguage() },
+                            onSelectLanguage = { LanguageManager.setLanguage(it) },
                             onToggleTheme = { ThemeManager.toggleTheme() },
                             onOpenScanner = { viewModel.navigateTo(1) },
                             onOpenHistory = { viewModel.navigateTo(2) },

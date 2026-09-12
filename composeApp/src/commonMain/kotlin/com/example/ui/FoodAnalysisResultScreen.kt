@@ -49,10 +49,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.model.NutritionAnalysis
+import com.example.model.displayFoodName
+import com.example.model.displayHealthTip
+import com.example.model.displayIngredients
+import com.example.model.displayPortionSize
 import com.example.ui.components.MacroItem
 import com.example.ui.theme.CarbsColor
 import com.example.ui.theme.FatColor
@@ -69,15 +74,14 @@ fun FoodAnalysisResultScreen(
     onSave: (name: String, calories: Int, portion: String, mealType: String) -> Unit,
     onRetake: () -> Unit
 ) {
-    val initialName = if (language == AppLanguage.EN && analysis.foodNameEn.isNotBlank()) {
-        analysis.foodNameEn
-    } else {
-        analysis.foodName
-    }
+    val initialName = analysis.displayFoodName(language)
+    val initialPortion = analysis.displayPortionSize(language)
+    val healthTip = analysis.displayHealthTip(language)
+    val ingredients = analysis.displayIngredients(language)
 
     var foodName by remember { mutableStateOf(initialName) }
     var caloriesText by remember { mutableStateOf(analysis.calories.toString()) }
-    var portionSize by remember { mutableStateOf(analysis.portionSize) }
+    var portionSize by remember { mutableStateOf(initialPortion) }
     var selectedMealType by remember { mutableStateOf(AppStrings.translateMeal(analysis.mealType, language)) }
     var isEditing by remember { mutableStateOf(false) }
 
@@ -220,11 +224,19 @@ fun FoodAnalysisResultScreen(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                    val secondaryName = if (language == AppLanguage.EN) analysis.foodName else analysis.foodNameEn
-                    if (secondaryName.isNotBlank() && secondaryName != foodName) {
+                    if (analysis.originName.isNotBlank() && analysis.originName != foodName) {
                         Text(
-                            text = secondaryName,
-                            style = MaterialTheme.typography.bodyMedium,
+                            text = buildString {
+                                append(AppStrings.originalNameLabel(language))
+                                append(": ")
+                                append(analysis.originName)
+                                if (analysis.pronunciation.isNotBlank()) {
+                                    append(" ")
+                                    append(analysis.pronunciation)
+                                }
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            fontStyle = FontStyle.Italic,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -398,7 +410,7 @@ fun FoodAnalysisResultScreen(
         }
 
         // AI Health Tip
-        if (analysis.healthTip.isNotBlank()) {
+        if (healthTip.isNotBlank()) {
             Spacer(modifier = Modifier.height(16.dp))
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -429,7 +441,7 @@ fun FoodAnalysisResultScreen(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = analysis.healthTip,
+                            text = healthTip,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
@@ -439,7 +451,7 @@ fun FoodAnalysisResultScreen(
         }
 
         // Ingredients detected
-        if (analysis.ingredients.isNotEmpty()) {
+        if (ingredients.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = AppStrings.ingredientsDetected(language),
@@ -453,7 +465,7 @@ fun FoodAnalysisResultScreen(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                analysis.ingredients.forEach { ingr ->
+                ingredients.forEach { ingr ->
                     Surface(
                         shape = RoundedCornerShape(8.dp),
                         color = MaterialTheme.colorScheme.surfaceVariant

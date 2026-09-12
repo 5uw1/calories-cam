@@ -1,8 +1,11 @@
 package com.example.model
 
+import com.example.util.AppLanguage
+
 data class NutritionAnalysis(
     val foodName: String,
     val foodNameEn: String = "",
+    val foodNameDe: String = "",
     val calories: Int,
     val protein: Float,
     val carbs: Float,
@@ -11,14 +14,51 @@ data class NutritionAnalysis(
     val sugar: Float = 0f,
     val sodium: Int = 0,
     val portionSize: String = "1 จาน",
+    val portionSizeEn: String = "",
+    val portionSizeDe: String = "",
     val mealType: String = "มื้อเที่ยง",
     val healthTip: String = "",
+    val healthTipEn: String = "",
+    val healthTipDe: String = "",
     val ingredients: List<String> = emptyList(),
+    val ingredientsEn: List<String> = emptyList(),
+    val ingredientsDe: List<String> = emptyList(),
     val confidence: Float = 0.95f,
     // JPEG bytes of the captured/selected photo (platform-neutral). Replaces android Bitmap.
     val imageBytes: ByteArray? = null,
-    val cuisine: String = "Thai"
+    val cuisine: String = "Thai",
+    // Authentic name in the dish's own origin language/spelling (e.g. "Spaghetti alla Carbonara"),
+    // shown on the analysis screen regardless of app language, with a plain-English phonetic guide.
+    val originName: String = "",
+    val pronunciation: String = ""
 )
+
+// Every *En/*De field is only populated when a translation exists (AI response or preset data);
+// these pick the localized value for the current language, falling back to the Thai default
+// so partially-translated data (e.g. a failed AI call) never renders blank.
+fun NutritionAnalysis.displayFoodName(language: AppLanguage): String = when (language) {
+    AppLanguage.EN -> foodNameEn.ifBlank { foodName }
+    AppLanguage.DE -> foodNameDe.ifBlank { foodName }
+    AppLanguage.TH -> foodName
+}
+
+fun NutritionAnalysis.displayPortionSize(language: AppLanguage): String = when (language) {
+    AppLanguage.EN -> portionSizeEn.ifBlank { portionSize }
+    AppLanguage.DE -> portionSizeDe.ifBlank { portionSize }
+    AppLanguage.TH -> portionSize
+}
+
+fun NutritionAnalysis.displayHealthTip(language: AppLanguage): String = when (language) {
+    AppLanguage.EN -> healthTipEn.ifBlank { healthTip }
+    AppLanguage.DE -> healthTipDe.ifBlank { healthTip }
+    AppLanguage.TH -> healthTip
+}
+
+fun NutritionAnalysis.displayIngredients(language: AppLanguage): List<String> = when (language) {
+    AppLanguage.EN -> ingredientsEn.ifEmpty { ingredients }
+    AppLanguage.DE -> ingredientsDe.ifEmpty { ingredients }
+    AppLanguage.TH -> ingredients
+}
 
 // Preloaded Swiss, Thai & international food samples for immediate test / emulator without physical webcam
 object FoodSamples {
@@ -26,6 +66,7 @@ object FoodSamples {
         NutritionAnalysis(
             foodName = "สวิสชีสฟองดูว์",
             foodNameEn = "Swiss Cheese Fondue",
+            foodNameDe = "Schweizer Käsefondue",
             calories = 680,
             protein = 32.0f,
             carbs = 46.0f,
@@ -34,14 +75,23 @@ object FoodSamples {
             sugar = 2.4f,
             sodium = 940,
             portionSize = "1 ชุดพร้อมขนมปัง (250g)",
+            portionSizeEn = "1 set with bread (250g)",
+            portionSizeDe = "1 Set mit Brot (250g)",
             mealType = "มื้อเย็น",
             healthTip = "แคลเซียมและโปรตีนสูงมากจากชีส Gruyère และ Emmental ควรรับประทานคู่กับชาดำอุ่นหรือไวน์ขาวสวิส และหลีกเลี่ยงน้ำเย็นจัด",
+            healthTipEn = "Very high in calcium and protein from Gruyère and Emmental cheese. Best paired with warm black tea or Swiss white wine — avoid ice-cold water.",
+            healthTipDe = "Sehr reich an Kalzium und Protein durch Gruyère- und Emmentaler-Käse. Am besten mit warmem Schwarztee oder Schweizer Weißwein genießen — eiskaltes Wasser vermeiden.",
             ingredients = listOf("ชีส Gruyère AOP", "ชีส Emmental AOP", "ไวน์ขาวสวิส", "ขนมปังบาแก็ตต์หั่นเต๋า", "กระเทียม", "เหล้าเคิร์ช (Kirsch)", "ลูกจันทน์เทศ"),
-            cuisine = "Swiss"
+            ingredientsEn = listOf("Gruyère AOP cheese", "Emmental AOP cheese", "Swiss white wine", "Cubed baguette", "Garlic", "Kirsch liqueur", "Nutmeg"),
+            ingredientsDe = listOf("Gruyère AOP Käse", "Emmentaler AOP Käse", "Schweizer Weißwein", "Gewürfeltes Baguette", "Knoblauch", "Kirschwasser (Kirsch)", "Muskatnuss"),
+            cuisine = "Swiss",
+            originName = "Chäsfondue",
+            pronunciation = "(KAY-zeh-fon-doo)"
         ),
         NutritionAnalysis(
             foodName = "ราเคล็ตต์สวิส",
             foodNameEn = "Swiss Raclette",
+            foodNameDe = "Schweizer Raclette",
             calories = 520,
             protein = 27.5f,
             carbs = 36.0f,
@@ -50,14 +100,23 @@ object FoodSamples {
             sugar = 1.8f,
             sodium = 860,
             portionSize = "1 จาน (260g)",
+            portionSizeEn = "1 plate (260g)",
+            portionSizeDe = "1 Teller (260g)",
             mealType = "มื้อเย็น",
             healthTip = "ชีสราเคล็ตต์สวิสแท้ให้โปรตีนเข้มข้นและฟอสฟอรัสบำรุงกระดูก เสิร์ฟคู่กับมันฝรั่งต้มทั้งเปลือก (Gschwellti) และแตงกวาดองตัดเลี่ยน",
+            healthTipEn = "Authentic Swiss raclette cheese delivers concentrated protein and bone-supporting phosphorus. Served with boiled potatoes in their skins (Gschwellti) and pickles to cut the richness.",
+            healthTipDe = "Echter Schweizer Raclette-Käse liefert konzentriertes Protein und knochenstärkendes Phosphor. Serviert mit Pellkartoffeln (Gschwellti) und Essiggurken, um die Würze auszugleichen.",
             ingredients = listOf("ชีส Raclette สวิสละลาย", "มันฝรั่งต้มทั้งเปลือก", "แตงกวาดอง (Cornichons)", "หอมดอง (Silver-skin onions)", "พริกไทยดำบดสด"),
-            cuisine = "Swiss"
+            ingredientsEn = listOf("Melted Swiss Raclette cheese", "Boiled potatoes in skin", "Cornichons", "Silver-skin onions", "Freshly ground black pepper"),
+            ingredientsDe = listOf("Geschmolzener Schweizer Raclette-Käse", "Pellkartoffeln", "Cornichons", "Silberzwiebeln", "Frisch gemahlener schwarzer Pfeffer"),
+            cuisine = "Swiss",
+            originName = "Raclette",
+            pronunciation = "(rah-KLET)"
         ),
         NutritionAnalysis(
             foodName = "เรอสติสวิส ไข่ดาวและเบคอน",
             foodNameEn = "Swiss Rösti with Fried Egg & Bacon",
+            foodNameDe = "Schweizer Rösti mit Spiegelei & Speck",
             calories = 510,
             protein = 18.0f,
             carbs = 52.0f,
@@ -66,14 +125,23 @@ object FoodSamples {
             sugar = 2.2f,
             sodium = 690,
             portionSize = "1 จาน (300g)",
+            portionSizeEn = "1 plate (300g)",
+            portionSizeDe = "1 Teller (300g)",
             mealType = "มื้อเช้า",
             healthTip = "อาหารประจำชาติสวิสยอดนิยม ให้พลังงานคาร์โบไฮเดรตและโพแทสเซียมสูง เหมาะสำหรับกิจกรรมเดินเขาหรือเล่นสกีบนเทือกเขาแอลป์",
+            healthTipEn = "A beloved Swiss national dish, high in carbohydrate energy and potassium — great fuel for hiking or skiing in the Alps.",
+            healthTipDe = "Ein beliebtes Schweizer Nationalgericht, reich an Kohlenhydratenergie und Kalium — ideal als Treibstoff für Wandern oder Skifahren in den Alpen.",
             ingredients = listOf("มันฝรั่งขูดเส้นทอดเนยสีทอง", "ไข่ดาว", "เบคอนสวิสกรอบ", "เนยสด", "เกลือหิมาลายันและพริกไทยดำ"),
-            cuisine = "Swiss"
+            ingredientsEn = listOf("Golden pan-fried shredded potatoes", "Fried egg", "Crispy Swiss bacon", "Fresh butter", "Himalayan salt and black pepper"),
+            ingredientsDe = listOf("Goldbraun gebratene Kartoffelraspeln", "Spiegelei", "Knuspriger Schweizer Speck", "Frische Butter", "Himalaya-Salz und schwarzer Pfeffer"),
+            cuisine = "Swiss",
+            originName = "Rösti",
+            pronunciation = "(ROOSH-tee)"
         ),
         NutritionAnalysis(
             foodName = "เนื้อลูกวัวซอสครีมเห็ดซูริก",
             foodNameEn = "Zurich-Style Veal (Zürcher Geschnetzeltes)",
+            foodNameDe = "Zürcher Geschnetzeltes",
             calories = 560,
             protein = 39.0f,
             carbs = 14.0f,
@@ -82,14 +150,23 @@ object FoodSamples {
             sugar = 3.2f,
             sodium = 760,
             portionSize = "1 จาน (310g)",
+            portionSizeEn = "1 plate (310g)",
+            portionSizeDe = "1 Teller (310g)",
             mealType = "มื้อเที่ยง",
             healthTip = "โปรตีนบริสุทธิ์สูงและธาตุเหล็กจากเนื้อลูกวัว เห็ดแชมปิญองให้วิตามินบี ทานคู่กับเรอสติหรือสลัดผักรวม",
+            healthTipEn = "High in pure protein and iron from veal. Champignon mushrooms add B vitamins. Best served with rösti or a mixed salad.",
+            healthTipDe = "Hoher Gehalt an reinem Protein und Eisen aus Kalbfleisch. Champignons liefern B-Vitamine. Am besten mit Rösti oder einem gemischten Salat servieren.",
             ingredients = listOf("เนื้อลูกวัวหั่นเส้น", "เห็ดแชมปิญองสด", "ครีมสดสวิส (Rahm)", "ไวน์ขาวสวิส", "หอมแดงสับ", "ผักชีฝรั่งพาสลีย์"),
-            cuisine = "Swiss"
+            ingredientsEn = listOf("Sliced veal strips", "Fresh champignon mushrooms", "Swiss fresh cream (Rahm)", "Swiss white wine", "Chopped shallots", "Fresh parsley"),
+            ingredientsDe = listOf("Kalbfleischstreifen", "Frische Champignons", "Schweizer Rahm", "Schweizer Weißwein", "Gehackte Schalotten", "Frische Petersilie"),
+            cuisine = "Swiss",
+            originName = "Zürcher Geschnetzeltes",
+            pronunciation = "(TSOOR-kher guh-SHNET-sel-tuss)"
         ),
         NutritionAnalysis(
             foodName = "เบอร์เชอร์ มึสลีสวิส",
             foodNameEn = "Traditional Swiss Bircher Muesli",
+            foodNameDe = "Traditionelles Schweizer Birchermüesli",
             calories = 310,
             protein = 12.5f,
             carbs = 50.0f,
@@ -98,14 +175,23 @@ object FoodSamples {
             sugar = 16.0f,
             sodium = 80,
             portionSize = "1 ถ้วย (250g)",
+            portionSizeEn = "1 cup (250g)",
+            portionSizeDe = "1 Tasse (250g)",
             mealType = "มื้อเช้า",
             healthTip = "คิดค้นโดย นพ. Bircher-Benner ในสวิตเซอร์แลนด์ ใยอาหารเบต้ากลูแคนสูง ช่วยลดคอเลสเตอรอล บำรุงระบบขับถ่ายและดีต่อสุขภาพหัวใจ",
+            healthTipEn = "Created by Dr. Bircher-Benner in Switzerland. High in beta-glucan fiber, which helps lower cholesterol, supports digestion, and is good for heart health.",
+            healthTipDe = "Erfunden von Dr. Bircher-Benner in der Schweiz. Reich an Beta-Glucan-Ballaststoffen, die den Cholesterinspiegel senken, die Verdauung unterstützen und gut für die Herzgesundheit sind.",
             ingredients = listOf("ข้าวโอ๊ตแช่นมสดข้ามคืน", "แอปเปิ้ลสวิสขูดสด", "โยเกิร์ตธรรมชาติ", "ผลเบอร์รี่สดรวม", "เฮเซลนัทและอัลมอนด์อบ", "น้ำผึ้งธรรมชาติ"),
-            cuisine = "Swiss"
+            ingredientsEn = listOf("Oats soaked overnight in fresh milk", "Freshly grated Swiss apple", "Natural yogurt", "Mixed fresh berries", "Roasted hazelnuts and almonds", "Natural honey"),
+            ingredientsDe = listOf("Über Nacht in frischer Milch eingeweichte Haferflocken", "Frisch geriebener Schweizer Apfel", "Naturjoghurt", "Gemischte frische Beeren", "Geröstete Haselnüsse und Mandeln", "Naturhonig"),
+            cuisine = "Swiss",
+            originName = "Birchermüesli",
+            pronunciation = "(BEER-kher MOOS-lee)"
         ),
         NutritionAnalysis(
             foodName = "แอลป์เลอร์มากาโรนี (อบชีสสไตล์แอลป์)",
             foodNameEn = "Swiss Alpine Macaroni (Älplermagronen)",
+            foodNameDe = "Älplermagronen",
             calories = 590,
             protein = 21.0f,
             carbs = 72.0f,
@@ -114,14 +200,23 @@ object FoodSamples {
             sugar = 12.0f,
             sodium = 790,
             portionSize = "1 จาน (320g)",
+            portionSizeEn = "1 plate (320g)",
+            portionSizeDe = "1 Teller (320g)",
             mealType = "มื้อเที่ยง",
             healthTip = "อาหารพื้นเมืองคนเลี้ยงวัวบนเทือกเขาแอลป์ ผสมพาสต้า มันฝรั่ง และชีสสวิส เสิร์ฟคู่กับซอสแอปเปิ้ล (Apfelmus) เพื่อตัดรสชาติ ให้พลังงานยาวนาน",
+            healthTipEn = "A traditional dish of Alpine cattle herders combining pasta, potatoes, and Swiss cheese. Served with applesauce (Apfelmus) to balance the richness and provide long-lasting energy.",
+            healthTipDe = "Ein traditionelles Gericht der Alpsennen, das Pasta, Kartoffeln und Schweizer Käse kombiniert. Serviert mit Apfelmus, um die Würze auszugleichen und langanhaltende Energie zu liefern.",
             ingredients = listOf("พาสต้ามักกะโรนี", "มันฝรั่งหั่นเต๋า", "ชีส Gruyère & Appenzeller", "ครีมสด", "หอมใหญ่เจียวคาราเมล", "ซอสแอปเปิ้ลบดสด"),
-            cuisine = "Swiss"
+            ingredientsEn = listOf("Macaroni pasta", "Diced potatoes", "Gruyère & Appenzeller cheese", "Fresh cream", "Caramelized onions", "Fresh apple sauce"),
+            ingredientsDe = listOf("Makkaroni-Nudeln", "Gewürfelte Kartoffeln", "Gruyère & Appenzeller Käse", "Frischer Rahm", "Karamellisierte Zwiebeln", "Frisches Apfelmus"),
+            cuisine = "Swiss",
+            originName = "Älplermagronen",
+            pronunciation = "(ELP-ler-mah-GROH-nen)"
         ),
         NutritionAnalysis(
             foodName = "ซุปข้าวบาร์เลย์สวิส กริซองส์",
             foodNameEn = "Swiss Graubünden Barley Soup",
+            foodNameDe = "Bündner Gerstensuppe",
             calories = 275,
             protein = 15.5f,
             carbs = 33.0f,
@@ -130,14 +225,23 @@ object FoodSamples {
             sugar = 3.8f,
             sodium = 710,
             portionSize = "1 ชาม (350ml)",
+            portionSizeEn = "1 bowl (350ml)",
+            portionSizeDe = "1 Schüssel (350ml)",
             mealType = "มื้อเย็น",
             healthTip = "ซุปอบอุ่นจากแคว้น Graubünden ข้าวบาร์เลย์อุดมด้วยใยอาหารละลายน้ำ ช่วยควบคุมระดับน้ำตาลและคอเลสเตอรอลในเลือด",
+            healthTipEn = "A warming soup from the canton of Graubünden. Barley is rich in soluble fiber, which helps manage blood sugar and cholesterol levels.",
+            healthTipDe = "Eine wärmende Suppe aus dem Kanton Graubünden. Gerste ist reich an löslichen Ballaststoffen, die helfen, Blutzucker- und Cholesterinwerte zu regulieren.",
             ingredients = listOf("ข้าวบาร์เลย์มุกสวิส", "เนื้อเค็ม Bündnerfleisch หรือแฮมรมควัน", "แครอทและเซเลอรี", "กระหล่ำปลีขาว", "น้ำสต๊อกผักสมุนไพร"),
-            cuisine = "Swiss"
+            ingredientsEn = listOf("Swiss pearl barley", "Bündnerfleisch or smoked ham", "Carrot and celery", "White cabbage", "Herbed vegetable stock"),
+            ingredientsDe = listOf("Schweizer Perlgerste", "Bündnerfleisch oder Rauchschinken", "Karotte und Sellerie", "Weißkohl", "Kräuter-Gemüsebrühe"),
+            cuisine = "Swiss",
+            originName = "Bündner Gerstensuppe",
+            pronunciation = "(BEWND-ner GHERS-ten-zup-uh)"
         ),
         NutritionAnalysis(
             foodName = "ดาร์กช็อกโกแลตสวิส 70% & เฮเซลนัท",
             foodNameEn = "Swiss Dark Chocolate & Hazelnuts",
+            foodNameDe = "Schweizer Zartbitterschokolade & Haselnüsse",
             calories = 205,
             protein = 3.8f,
             carbs = 16.0f,
@@ -146,10 +250,18 @@ object FoodSamples {
             sugar = 9.8f,
             sodium = 15,
             portionSize = "4 ชิ้น (35g)",
+            portionSizeEn = "4 pieces (35g)",
+            portionSizeDe = "4 Stück (35g)",
             mealType = "ของว่าง",
             healthTip = "ช็อกโกแลตสวิสแท้โกโก้ 70% อุดมด้วยฟลาโวนอยด์ สารต้านอนุมูลอิสระ และแมกนีเซียม ช่วยคลายความเครียดและบำรุงหลอดเลือดหัวใจ",
+            healthTipEn = "Authentic 70% Swiss dark chocolate is rich in flavonoids, antioxidants, and magnesium, helping to relieve stress and support cardiovascular health.",
+            healthTipDe = "Echte Schweizer Zartbitterschokolade mit 70% Kakao ist reich an Flavonoiden, Antioxidantien und Magnesium, was hilft, Stress abzubauen und die Herz-Kreislauf-Gesundheit zu unterstützen.",
             ingredients = listOf("โกโก้แมสสวิส 70%", "เฮเซลนัทคั่วกรอบ", "เนยโกโก้บริสุทธิ์", "น้ำตาลอ้อยธรรมชาติ", "กลิ่นวานิลลาแท้"),
-            cuisine = "Swiss"
+            ingredientsEn = listOf("70% Swiss cocoa mass", "Roasted crushed hazelnuts", "Pure cocoa butter", "Natural cane sugar", "Real vanilla flavor"),
+            ingredientsDe = listOf("70% Schweizer Kakaomasse", "Geröstete gehackte Haselnüsse", "Reine Kakaobutter", "Natürlicher Rohrzucker", "Echtes Vanillearoma"),
+            cuisine = "Swiss",
+            originName = "Schweizer Schokolade",
+            pronunciation = "(SHVYT-ser sho-ko-LAH-duh)"
         )
     )
 
@@ -157,6 +269,7 @@ object FoodSamples {
         NutritionAnalysis(
             foodName = "ข้าวมันไก่ต้ม",
             foodNameEn = "Hainanese Chicken Rice",
+            foodNameDe = "Hainan-Hühnchenreis",
             calories = 585,
             protein = 28.5f,
             carbs = 72.0f,
@@ -165,14 +278,23 @@ object FoodSamples {
             sugar = 2.0f,
             sodium = 920,
             portionSize = "1 จาน (350g)",
+            portionSizeEn = "1 plate (350g)",
+            portionSizeDe = "1 Teller (350g)",
             mealType = "มื้อเที่ยง",
             healthTip = "โปรตีนสูงจากเนื้อไก่ หากต้องการลดแคลอรี่สามารถเลี่ยงหนังไก่และลดน้ำจิ้มได้",
+            healthTipEn = "High in protein from chicken. To reduce calories, you can skip the chicken skin and use less dipping sauce.",
+            healthTipDe = "Reich an Protein durch Hühnchen. Um Kalorien zu reduzieren, kannst du die Hühnerhaut weglassen und weniger Dip-Sauce verwenden.",
             ingredients = listOf("ข้าวหุงน้ำซุปไก่", "อก/สะโพกไก่ต้ม", "แตงกวา", "เลือดไก่", "น้ำจิ้มเต้าเจี้ยว", "น้ำซุปฟัก"),
-            cuisine = "Thai"
+            ingredientsEn = listOf("Rice cooked in chicken broth", "Boiled chicken breast/thigh", "Cucumber", "Chicken blood", "Soybean dipping sauce", "Winter melon soup"),
+            ingredientsDe = listOf("In Hühnerbrühe gekochter Reis", "Gekochte Hühnerbrust/-schenkel", "Gurke", "Hühnerblut", "Sojabohnen-Dip", "Wintermelonensuppe"),
+            cuisine = "Thai",
+            originName = "ข้าวมันไก่ต้ม",
+            pronunciation = "(khao man gai tom)"
         ),
         NutritionAnalysis(
             foodName = "ผัดกะเพราหมูสับไข่ดาว",
             foodNameEn = "Pad Krapow Pork with Fried Egg",
+            foodNameDe = "Pad Krapow mit Schweinehack und Spiegelei",
             calories = 630,
             protein = 32.0f,
             carbs = 65.0f,
@@ -181,14 +303,23 @@ object FoodSamples {
             sugar = 3.5f,
             sodium = 1150,
             portionSize = "1 จาน (380g)",
+            portionSizeEn = "1 plate (380g)",
+            portionSizeDe = "1 Teller (380g)",
             mealType = "มื้อเที่ยง",
             healthTip = "มีสารต้านอนุมูลอิสระจากใบกะเพราและพริก ระวังโซเดียมและน้ำมันจากไข่ดาวทอดกรอบ",
+            healthTipEn = "Contains antioxidants from holy basil and chili. Watch out for sodium and oil from the crispy fried egg.",
+            healthTipDe = "Enthält Antioxidantien aus heiligem Basilikum und Chili. Achte auf Natrium und Öl vom knusprigen Spiegelei.",
             ingredients = listOf("ข้าวสวยหอมมะลิ", "หมูสับ", "ใบกะเพราสด", "พริกขี้หนูกระเทียม", "ไข่ดาว", "ซอสปรุงรส"),
-            cuisine = "Thai"
+            ingredientsEn = listOf("Jasmine rice", "Minced pork", "Fresh holy basil leaves", "Bird's eye chili and garlic", "Fried egg", "Seasoning sauce"),
+            ingredientsDe = listOf("Jasminreis", "Schweinehackfleisch", "Frische Thai-Basilikumblätter", "Vogelaugenchili und Knoblauch", "Spiegelei", "Würzsauce"),
+            cuisine = "Thai",
+            originName = "ผัดกะเพราหมูสับไข่ดาว",
+            pronunciation = "(pat gra-pow moo sup)"
         ),
         NutritionAnalysis(
             foodName = "ส้มตำไทย + ไก่ย่าง",
             foodNameEn = "Som Tum Thai with Grilled Chicken",
+            foodNameDe = "Som Tam mit gegrilltem Hähnchen",
             calories = 380,
             protein = 29.0f,
             carbs = 35.0f,
@@ -197,14 +328,23 @@ object FoodSamples {
             sugar = 12.0f,
             sodium = 880,
             portionSize = "1 ชุด (320g)",
+            portionSizeEn = "1 set (320g)",
+            portionSizeDe = "1 Set (320g)",
             mealType = "มื้อเย็น",
             healthTip = "แคลอรี่ต่ำ ใยอาหารสูง วิตามินซีสูงจากมะละกอและมะนาว สดชื่นและดีต่อระบบขับถ่าย",
+            healthTipEn = "Low in calories and high in fiber, with plenty of vitamin C from papaya and lime — refreshing and good for digestion.",
+            healthTipDe = "Kalorienarm und ballaststoffreich, mit viel Vitamin C aus Papaya und Limette — erfrischend und gut für die Verdauung.",
             ingredients = listOf("มะละกอดิบเส้น", "ถั่วฝักยาว", "มะเขือเทศ", "กุ้งแห้งและถั่วลิสง", "สะโพกไก่ย่างสมุนไพร"),
-            cuisine = "Thai"
+            ingredientsEn = listOf("Shredded green papaya", "Long beans", "Tomato", "Dried shrimp and peanuts", "Herb-grilled chicken thigh"),
+            ingredientsDe = listOf("Geraspelte grüne Papaya", "Langbohnen", "Tomate", "Getrocknete Garnelen und Erdnüsse", "Kräuter-gegrillter Hähnchenschenkel"),
+            cuisine = "Thai",
+            originName = "ส้มตำไทย",
+            pronunciation = "(som tam thai)"
         ),
         NutritionAnalysis(
             foodName = "ต้มยำกุ้งน้ำใส",
             foodNameEn = "Tom Yum Goong",
+            foodNameDe = "Tom Yum Goong",
             calories = 190,
             protein = 24.0f,
             carbs = 12.0f,
@@ -213,14 +353,23 @@ object FoodSamples {
             sugar = 3.0f,
             sodium = 960,
             portionSize = "1 ชาม (350ml)",
+            portionSizeEn = "1 bowl (350ml)",
+            portionSizeDe = "1 Schüssel (350ml)",
             mealType = "มื้อเย็น",
             healthTip = "แคลอรี่ต่ำมาก โปรตีนสะอาดจากกุ้ง สมุนไพรข่า ตะไคร้ ใบมะกรูด ช่วยกระตุ้นการเผาผลาญ",
+            healthTipEn = "Very low in calories with clean protein from shrimp. Galangal, lemongrass, and kaffir lime leaves help boost metabolism.",
+            healthTipDe = "Sehr kalorienarm mit sauberem Protein aus Garnelen. Galgant, Zitronengras und Kaffirlimettenblätter kurbeln den Stoffwechsel an.",
             ingredients = listOf("กุ้งสด", "เห็ดฟาง", "ตะไคร้ ข่า ใบมะกรูด", "พริกขี้หนูสวน", "น้ำมะนาวคั้นสด"),
-            cuisine = "Thai"
+            ingredientsEn = listOf("Fresh shrimp", "Straw mushrooms", "Lemongrass, galangal, kaffir lime leaves", "Bird's eye chili", "Freshly squeezed lime juice"),
+            ingredientsDe = listOf("Frische Garnelen", "Strohpilze", "Zitronengras, Galgant, Kaffirlimettenblätter", "Vogelaugenchili", "Frisch gepresster Limettensaft"),
+            cuisine = "Thai",
+            originName = "ต้มยำกุ้งน้ำใส",
+            pronunciation = "(tom yum goong)"
         ),
         NutritionAnalysis(
             foodName = "สลัดอกไก่อะโวคาโด",
             foodNameEn = "Avocado Chicken Salad",
+            foodNameDe = "Avocado-Hähnchensalat",
             calories = 420,
             protein = 35.0f,
             carbs = 18.0f,
@@ -229,14 +378,23 @@ object FoodSamples {
             sugar = 4.0f,
             sodium = 420,
             portionSize = "1 ชาม (320g)",
+            portionSizeEn = "1 bowl (320g)",
+            portionSizeDe = "1 Schüssel (320g)",
             mealType = "มื้อเย็น",
             healthTip = "ไขมันดีสูงจากอะโวคาโด ช่วยบำรุงหัวใจ ใยอาหารสูงมากและโปรตีนลีน เหมาะกับคนรักสุขภาพ",
+            healthTipEn = "High in healthy fats from avocado, which supports heart health. Very high in fiber and lean protein — great for health-conscious eaters.",
+            healthTipDe = "Reich an gesunden Fetten aus Avocado, die die Herzgesundheit unterstützen. Sehr ballaststoffreich und mageres Protein — ideal für Gesundheitsbewusste.",
             ingredients = listOf("อกไก่ย่างฉีก", "อะโวคาโดหั่นเต๋า", "ผักสลัดไฮโดรโปนิกส์", "มะเขือเทศราชินี", "น้ำสลัดบัลซามิก"),
-            cuisine = "Thai"
+            ingredientsEn = listOf("Shredded grilled chicken breast", "Diced avocado", "Hydroponic lettuce", "Cherry tomatoes", "Balsamic dressing"),
+            ingredientsDe = listOf("Zerzupfte gegrillte Hähnchenbrust", "Gewürfelte Avocado", "Hydroponischer Salat", "Cherrytomaten", "Balsamico-Dressing"),
+            cuisine = "Thai",
+            originName = "สลัดอกไก่อะโวคาโด",
+            pronunciation = "(sa-lat ok gai a-vo-ka-do)"
         ),
         NutritionAnalysis(
             foodName = "โจ๊กหมูใส่ไข่",
             foodNameEn = "Pork Congee with Egg",
+            foodNameDe = "Reisbrei mit Schweinefleisch und Ei",
             calories = 340,
             protein = 18.0f,
             carbs = 42.0f,
@@ -245,10 +403,18 @@ object FoodSamples {
             sugar = 1.5f,
             sodium = 790,
             portionSize = "1 ชาม (400g)",
+            portionSizeEn = "1 bowl (400g)",
+            portionSizeDe = "1 Schüssel (400g)",
             mealType = "มื้อเช้า",
             healthTip = "ย่อยง่าย สบายท้อง เหมาะสำหรับมื้อเช้า ให้พลังงานต่อเนื่องและอบอุ่นร่างกาย",
+            healthTipEn = "Easy to digest and gentle on the stomach, perfect for breakfast — provides sustained energy and warms the body.",
+            healthTipDe = "Leicht verdaulich und magenschonend, perfekt zum Frühstück — liefert anhaltende Energie und wärmt den Körper.",
             ingredients = listOf("ข้าวต้มบดละเอียด", "หมูสับปั้นก้อน", "ไข่ลวก", "ขิงซอยและต้นหอม", "ซีอิ๊วขาว"),
-            cuisine = "Thai"
+            ingredientsEn = listOf("Finely mashed rice porridge", "Minced pork balls", "Soft-boiled egg", "Sliced ginger and spring onion", "Light soy sauce"),
+            ingredientsDe = listOf("Fein zerkochter Reisbrei", "Schweinehack-Bällchen", "Weich gekochtes Ei", "Geschnittener Ingwer und Frühlingszwiebel", "Helle Sojasauce"),
+            cuisine = "Thai",
+            originName = "โจ๊กหมูใส่ไข่",
+            pronunciation = "(jok moo sai khai)"
         )
     )
 
@@ -256,6 +422,7 @@ object FoodSamples {
         NutritionAnalysis(
             foodName = "พิซซ่ามาเกริต้า",
             foodNameEn = "Pizza Margherita",
+            foodNameDe = "Pizza Margherita",
             calories = 620,
             protein = 24.0f,
             carbs = 76.0f,
@@ -264,14 +431,23 @@ object FoodSamples {
             sugar = 4.2f,
             sodium = 1120,
             portionSize = "1 ถาดบุคคล (300g)",
+            portionSizeEn = "1 personal pan (300g)",
+            portionSizeDe = "1 persönliche Pfanne (300g)",
             mealType = "มื้อเย็น",
             healthTip = "พิซซ่าต้นตำรับจากเมืองเนเปิลส์ ใช้มอสซาเรลล่าสด มะเขือเทศ San Marzano อุดมด้วยไลโคปีน และใบโหระพาอิตาเลียนสด",
+            healthTipEn = "An original recipe from Naples, using fresh mozzarella and San Marzano tomatoes rich in lycopene, topped with fresh Italian basil.",
+            healthTipDe = "Ein Originalrezept aus Neapel mit frischem Mozzarella und San-Marzano-Tomaten, reich an Lycopin, garniert mit frischem italienischem Basilikum.",
             ingredients = listOf("แป้งพิซซ่าโฮมเมด", "มอสซาเรลล่าชีสสด", "ซอสมะเขือเทศ San Marzano", "น้ำมันมะกอก Extra Virgin", "ใบโหระพาอิตาเลียน (Basil)"),
-            cuisine = "Italian"
+            ingredientsEn = listOf("Homemade pizza dough", "Fresh mozzarella cheese", "San Marzano tomato sauce", "Extra virgin olive oil", "Fresh Italian basil"),
+            ingredientsDe = listOf("Hausgemachter Pizzateig", "Frischer Mozzarella-Käse", "San-Marzano-Tomatensauce", "Natives Olivenöl extra", "Frisches italienisches Basilikum"),
+            cuisine = "Italian",
+            originName = "Pizza Margherita",
+            pronunciation = "(PEET-sah mar-geh-REE-tah)"
         ),
         NutritionAnalysis(
             foodName = "สปาเก็ตตี้คาโบนาร่าแท้",
             foodNameEn = "Authentic Spaghetti Carbonara",
+            foodNameDe = "Authentische Spaghetti Carbonara",
             calories = 580,
             protein = 26.5f,
             carbs = 62.0f,
@@ -280,14 +456,23 @@ object FoodSamples {
             sugar = 2.1f,
             sodium = 890,
             portionSize = "1 จาน (280g)",
+            portionSizeEn = "1 plate (280g)",
+            portionSizeDe = "1 Teller (280g)",
             mealType = "มื้อเที่ยง",
             healthTip = "สูตรดั้งเดิมจากกรุงโรม ไม่ใส่ครีม ใช้ความมันและโปรตีนจากไข่แดง ชีส Pecorino Romano และเนื้อหมู Guanciale รสชาติเข้มข้นสไตล์อิตาเลียนแท้",
+            healthTipEn = "A traditional Roman recipe with no cream — richness comes from egg yolk, Pecorino Romano cheese, and crispy Guanciale pork for an authentic bold Italian flavor.",
+            healthTipDe = "Ein traditionelles römisches Rezept ohne Sahne — die Cremigkeit kommt von Eigelb, Pecorino-Romano-Käse und knusprigem Guanciale-Speck für einen authentischen, kräftigen italienischen Geschmack.",
             ingredients = listOf("เส้นสปาเก็ตตี้ Al Dente", "ไข่แดงสด", "ชีส Pecorino Romano / Parmigiano", "เนื้อหมู Guanciale ทอดกรอบ", "พริกไทยดำบดสด"),
-            cuisine = "Italian"
+            ingredientsEn = listOf("Al dente spaghetti", "Fresh egg yolk", "Pecorino Romano / Parmigiano cheese", "Crispy fried Guanciale pork", "Freshly ground black pepper"),
+            ingredientsDe = listOf("Al dente gekochte Spaghetti", "Frisches Eigelb", "Pecorino Romano / Parmigiano Käse", "Knusprig gebratener Guanciale-Speck", "Frisch gemahlener schwarzer Pfeffer"),
+            cuisine = "Italian",
+            originName = "Spaghetti alla Carbonara",
+            pronunciation = "(spah-GET-tee AH-lah kar-boh-NAH-rah)"
         ),
         NutritionAnalysis(
             foodName = "ลาซานญ่าเนื้ออบชีส",
             foodNameEn = "Beef Lasagna Bolognese",
+            foodNameDe = "Rinder-Lasagne Bolognese",
             calories = 650,
             protein = 36.0f,
             carbs = 54.0f,
@@ -296,14 +481,23 @@ object FoodSamples {
             sugar = 6.0f,
             sodium = 980,
             portionSize = "1 ชิ้นใหญ่ (320g)",
+            portionSizeEn = "1 large slice (320g)",
+            portionSizeDe = "1 großes Stück (320g)",
             mealType = "มื้อเย็น",
             healthTip = "โปรตีนสูงและธาตุเหล็กจากซอสเนื้อ Bolognese สลับชั้นด้วยพาสต้า ซอสเบชาเมล และพาร์มีซานชีสอบจนหอมกรุ่น",
+            healthTipEn = "High in protein and iron from the Bolognese meat sauce, layered with pasta, bechamel sauce, and Parmesan baked until fragrant.",
+            healthTipDe = "Reich an Protein und Eisen aus der Bolognese-Fleischsauce, geschichtet mit Pasta, Béchamelsauce und Parmesan, goldbraun gebacken.",
             ingredients = listOf("แผ่นลาซานญ่า", "เนื้อบดตุ๋นซอสมะเขือเทศ Bolognese", "ซอสเบชาเมล (Bechamel)", "พาร์มีซานชีส", "มอสซาเรลล่าชีส"),
-            cuisine = "Italian"
+            ingredientsEn = listOf("Lasagna sheets", "Bolognese tomato meat sauce", "Bechamel sauce", "Parmesan cheese", "Mozzarella cheese"),
+            ingredientsDe = listOf("Lasagneplatten", "Bolognese-Tomatenfleischsauce", "Béchamelsauce", "Parmesan-Käse", "Mozzarella-Käse"),
+            cuisine = "Italian",
+            originName = "Lasagne alla Bolognese",
+            pronunciation = "(lah-ZAH-nyeh AH-lah boh-loh-NYEH-zeh)"
         ),
         NutritionAnalysis(
             foodName = "ริซอตโต้เห็ดพอร์ชินี",
             foodNameEn = "Porcini Mushroom Risotto",
+            foodNameDe = "Steinpilz-Risotto",
             calories = 440,
             protein = 11.5f,
             carbs = 64.0f,
@@ -312,14 +506,23 @@ object FoodSamples {
             sugar = 2.5f,
             sodium = 680,
             portionSize = "1 จาน (290g)",
+            portionSizeEn = "1 plate (290g)",
+            portionSizeDe = "1 Teller (290g)",
             mealType = "มื้อค่ำ",
             healthTip = "ข้าว Carnaroli หุงกับน้ำสต๊อกผักและเห็ดพอร์ชินี อุดมด้วยเบต้ากลูแคนและวิตามินดี ละมุนด้วยเนยและพาร์มีซานชีส",
+            healthTipEn = "Carnaroli rice cooked in vegetable stock with porcini mushrooms, rich in beta-glucan and vitamin D, finished with butter and Parmesan for a creamy texture.",
+            healthTipDe = "Carnaroli-Reis in Gemüsebrühe mit Steinpilzen gekocht, reich an Beta-Glucan und Vitamin D, mit Butter und Parmesan für eine cremige Textur verfeinert.",
             ingredients = listOf("ข้าวริซอตโต้ Carnaroli", "เห็ดพอร์ชินีแห้งและสด", "ไวน์ขาวอิตาลี", "น้ำสต๊อกผัก", "พาร์มีซานชีส", "เนยสด"),
-            cuisine = "Italian"
+            ingredientsEn = listOf("Carnaroli risotto rice", "Dried and fresh porcini mushrooms", "Italian white wine", "Vegetable stock", "Parmesan cheese", "Fresh butter"),
+            ingredientsDe = listOf("Carnaroli-Risottoreis", "Getrocknete und frische Steinpilze", "Italienischer Weißwein", "Gemüsebrühe", "Parmesan-Käse", "Frische Butter"),
+            cuisine = "Italian",
+            originName = "Risotto ai Porcini",
+            pronunciation = "(ree-ZOT-toh eye por-CHEE-nee)"
         ),
         NutritionAnalysis(
             foodName = "ทิรามิสุอิตาเลียน",
             foodNameEn = "Classic Italian Tiramisu",
+            foodNameDe = "Klassisches italienisches Tiramisu",
             calories = 360,
             protein = 7.0f,
             carbs = 38.0f,
@@ -328,10 +531,18 @@ object FoodSamples {
             sugar = 24.0f,
             sodium = 110,
             portionSize = "1 ชิ้น (130g)",
+            portionSizeEn = "1 slice (130g)",
+            portionSizeDe = "1 Stück (130g)",
             mealType = "ของว่าง",
             healthTip = "ของหวานเลื่องชื่อจากแคว้นเวเนโต มาสคาร์โปเนชีสเนียนนุ่ม ขนมปังเลดี้ฟิงเกอร์ชุบกาแฟเอสเพรสโซเข้มข้น โรยผงโกโก้แท้",
+            healthTipEn = "A famous dessert from the Veneto region — smooth mascarpone cheese, ladyfingers soaked in rich espresso, dusted with real cocoa powder.",
+            healthTipDe = "Ein berühmtes Dessert aus der Region Venetien — cremiger Mascarpone-Käse, Löffelbiskuits getränkt in kräftigem Espresso, bestäubt mit echtem Kakaopulver.",
             ingredients = listOf("มาสคาร์โปเนชีส", "เลดี้ฟิงเกอร์ (Savoiardi)", "กาแฟเอสเพรสโซเข้มข้น", "ไข่สด", "ผงโกโก้แท้ไร้น้ำตาล"),
-            cuisine = "Italian"
+            ingredientsEn = listOf("Mascarpone cheese", "Ladyfingers (Savoiardi)", "Strong espresso coffee", "Fresh eggs", "Unsweetened real cocoa powder"),
+            ingredientsDe = listOf("Mascarpone-Käse", "Löffelbiskuits (Savoiardi)", "Starker Espresso-Kaffee", "Frische Eier", "Ungesüßtes echtes Kakaopulver"),
+            cuisine = "Italian",
+            originName = "Tiramisù",
+            pronunciation = "(tee-rah-mee-SOO)"
         )
     )
 
@@ -339,6 +550,7 @@ object FoodSamples {
         NutritionAnalysis(
             foodName = "เนื้อตุ๋นไวน์แดงสไตล์เบอร์กันดี",
             foodNameEn = "Beef Bourguignon",
+            foodNameDe = "Boeuf Bourguignon",
             calories = 540,
             protein = 42.0f,
             carbs = 16.0f,
@@ -347,14 +559,23 @@ object FoodSamples {
             sugar = 4.0f,
             sodium = 780,
             portionSize = "1 จาน (340g)",
+            portionSizeEn = "1 plate (340g)",
+            portionSizeDe = "1 Teller (340g)",
             mealType = "มื้อเย็น",
             healthTip = "อาหารคลาสสิกฝรั่งเศส เนื้อวัวตุ๋นช้าๆ ในไวน์แดง Pinot Noir นานหลายชั่วโมง เนื้อนุ่มละลายในปาก โปรตีนสูงและอุดมด้วยคอลลาเจน",
+            healthTipEn = "A classic French dish — beef slow-braised for hours in Pinot Noir red wine until melt-in-your-mouth tender, high in protein and rich in collagen.",
+            healthTipDe = "Ein klassisches französisches Gericht — Rindfleisch, stundenlang in Pinot-Noir-Rotwein geschmort, bis es zart zerfällt, reich an Protein und Kollagen.",
             ingredients = listOf("เนื้อวัวสันคอตุ๋น", "ไวน์แดงเบอร์กันดี", "เห็ดแชมปิญอง", "หอมมุก (Pearl onions)", "แครอทและเบคอนชิ้น", "สมุนไพร Bouquet garni"),
-            cuisine = "French"
+            ingredientsEn = listOf("Braised beef chuck", "Burgundy red wine", "Champignon mushrooms", "Pearl onions", "Carrots and bacon lardons", "Bouquet garni herbs"),
+            ingredientsDe = listOf("Geschmortes Rindfleisch", "Burgunder Rotwein", "Champignons", "Perlzwiebeln", "Karotten und Speckwürfel", "Bouquet-garni-Kräuter"),
+            cuisine = "French",
+            originName = "Bœuf Bourguignon",
+            pronunciation = "(buff boor-gee-NYOHN)"
         ),
         NutritionAnalysis(
             foodName = "ซุปหัวหอมสไตล์ปารีส อบชีส",
             foodNameEn = "French Onion Soup (Soupe à l'oignon)",
+            foodNameDe = "Französische Zwiebelsuppe",
             calories = 380,
             protein = 16.5f,
             carbs = 29.0f,
@@ -363,14 +584,23 @@ object FoodSamples {
             sugar = 8.5f,
             sodium = 870,
             portionSize = "1 ชาม (320ml)",
+            portionSizeEn = "1 bowl (320ml)",
+            portionSizeDe = "1 Schüssel (320ml)",
             mealType = "มื้อค่ำ",
             healthTip = "หัวหอมผัดคาราเมลจนหวานธรรมชาติ ต้มในน้ำซุปเนื้อเคี่ยวเข้มข้น ปิดหน้าด้วยขนมปังบาแก็ตต์และชีสกรูว์แยร์อบเกรียม อบอุ่นสบายท้อง",
+            healthTipEn = "Onions caramelized to natural sweetness, simmered in a rich beef broth, topped with baguette and melted Gruyère cheese — warm and comforting.",
+            healthTipDe = "Zwiebeln zu natürlicher Süße karamellisiert, in kräftiger Rinderbrühe geköchelt, mit Baguette und geschmolzenem Gruyère-Käse überbacken — warm und wohltuend.",
             ingredients = listOf("หอมใหญ่ผัดคาราเมล", "น้ำสต๊อกเนื้อเข้มข้น", "ขนมปังฝรั่งเศสบาแก็ตต์", "ชีส Gruyère / Comté อบเยิ้ม", "เนยสด"),
-            cuisine = "French"
+            ingredientsEn = listOf("Caramelized onions", "Rich beef stock", "French baguette", "Melted Gruyère / Comté cheese", "Fresh butter"),
+            ingredientsDe = listOf("Karamellisierte Zwiebeln", "Kräftige Rinderbrühe", "Französisches Baguette", "Geschmolzener Gruyère-/Comté-Käse", "Frische Butter"),
+            cuisine = "French",
+            originName = "Soupe à l'oignon",
+            pronunciation = "(soop ah lon-YOHN)"
         ),
         NutritionAnalysis(
             foodName = "คีชลอแรน (พายไข่อบเบคอน)",
             foodNameEn = "Quiche Lorraine",
+            foodNameDe = "Quiche Lorraine",
             calories = 490,
             protein = 19.0f,
             carbs = 32.0f,
@@ -379,14 +609,23 @@ object FoodSamples {
             sugar = 2.4f,
             sodium = 690,
             portionSize = "1 ชิ้น (180g)",
+            portionSizeEn = "1 slice (180g)",
+            portionSizeDe = "1 Stück (180g)",
             mealType = "มื้อเช้า",
             healthTip = "อาหารชื่อดังจากแคว้นลอแรน พายแป้งกรอบสอดไส้คัสตาร์ดไข่ ครีมสด และเบคอนรมควัน ให้พลังงานและโปรตีนสูง เหมาะกับมื้อสาย",
+            healthTipEn = "A famous dish from the Lorraine region — a crisp pastry shell filled with egg custard, fresh cream, and smoked bacon, high in energy and protein, great for a late breakfast.",
+            healthTipDe = "Ein berühmtes Gericht aus der Region Lothringen — eine knusprige Teighülle gefüllt mit Eierstich, frischer Sahne und Räucherspeck, reich an Energie und Protein, ideal für ein spätes Frühstück.",
             ingredients = listOf("แป้งพายร่วน (Shortcrust pastry)", "ไข่ไก่สดและครีมสด (Crème fraîche)", "เบคอนรมควันชิ้นหนา (Lardons)", "ชีสเอมเมนทัล", "ลูกจันทน์เทศ"),
-            cuisine = "French"
+            ingredientsEn = listOf("Shortcrust pastry", "Fresh eggs and crème fraîche", "Thick-cut smoked bacon (lardons)", "Emmental cheese", "Nutmeg"),
+            ingredientsDe = listOf("Mürbeteig", "Frische Eier und Crème fraîche", "Dick geschnittener Räucherspeck (Lardons)", "Emmentaler Käse", "Muskatnuss"),
+            cuisine = "French",
+            originName = "Quiche Lorraine",
+            pronunciation = "(keesh lor-RENN)"
         ),
         NutritionAnalysis(
             foodName = "สตูว์ผักโพรวองซ์ (ราตาตูย)",
             foodNameEn = "Ratatouille Provençale",
+            foodNameDe = "Ratatouille Provençale",
             calories = 185,
             protein = 4.5f,
             carbs = 22.0f,
@@ -395,14 +634,23 @@ object FoodSamples {
             sugar = 10.5f,
             sodium = 360,
             portionSize = "1 จาน (280g)",
+            portionSizeEn = "1 plate (280g)",
+            portionSizeDe = "1 Teller (280g)",
             mealType = "มื้อเย็น",
             healthTip = "เมนูผักสุขภาพทางตอนใต้ของฝรั่งเศส แคลอรี่ต่ำมาก ใยอาหารและสารต้านอนุมูลอิสระสูง ปรุงด้วยน้ำมันมะกอกและสมุนไพร Herbes de Provence",
+            healthTipEn = "A healthy vegetable dish from southern France, very low in calories and high in fiber and antioxidants, cooked with olive oil and Herbes de Provence.",
+            healthTipDe = "Ein gesundes Gemüsegericht aus Südfrankreich, sehr kalorienarm und reich an Ballaststoffen und Antioxidantien, zubereitet mit Olivenöl und Kräutern der Provence.",
             ingredients = listOf("ซูกินี", "มะเขือม่วง", "พริกหวาน 3 สี", "มะเขือเทศสุกฉ่ำ", "น้ำมันมะกอกบริสุทธิ์", "สมุนไพร Herbes de Provence"),
-            cuisine = "French"
+            ingredientsEn = listOf("Zucchini", "Eggplant", "Three-color bell peppers", "Ripe juicy tomatoes", "Extra virgin olive oil", "Herbes de Provence"),
+            ingredientsDe = listOf("Zucchini", "Aubergine", "Dreifarbige Paprika", "Reife saftige Tomaten", "Natives Olivenöl extra", "Kräuter der Provence"),
+            cuisine = "French",
+            originName = "Ratatouille Provençale",
+            pronunciation = "(rat-ah-TOO-ee proh-vahn-SAHL)"
         ),
         NutritionAnalysis(
             foodName = "ครัวซองต์เนยสดฝรั่งเศส",
             foodNameEn = "French Butter Croissant",
+            foodNameDe = "Französisches Buttercroissant",
             calories = 270,
             protein = 5.2f,
             carbs = 28.5f,
@@ -411,10 +659,18 @@ object FoodSamples {
             sugar = 4.0f,
             sodium = 280,
             portionSize = "1 ชิ้น (65g)",
+            portionSizeEn = "1 piece (65g)",
+            portionSizeDe = "1 Stück (65g)",
             mealType = "มื้อเช้า",
             healthTip = "ครัวซองต์เนยแท้จากฝรั่งเศส แป้งกรอบนอกนุ่มในเป็นชั้นฟู ทานคู่กับกาแฟดำร้อนเพื่อความสดชื่นยามเช้า",
+            healthTipEn = "An authentic French butter croissant with a crisp, flaky, buttery exterior and soft layers inside — best enjoyed with a hot black coffee for a refreshing morning.",
+            healthTipDe = "Ein authentisches französisches Buttercroissant mit knuspriger, blättriger, buttriger Außenseite und weichen Schichten innen — am besten mit einem heißen schwarzen Kaffee für einen erfrischenden Morgen genossen.",
             ingredients = listOf("แป้งสาลีฝรั่งเศส", "เนยสดฝรั่งเศส (Beurre de Tourage)", "ยีสต์ธรรมชาติ", "นมสด", "เกลือทะเล"),
-            cuisine = "French"
+            ingredientsEn = listOf("French wheat flour", "French butter (Beurre de Tourage)", "Natural yeast", "Fresh milk", "Sea salt"),
+            ingredientsDe = listOf("Französisches Weizenmehl", "Französische Butter (Beurre de Tourage)", "Natürliche Hefe", "Frische Milch", "Meersalz"),
+            cuisine = "French",
+            originName = "Croissant au Beurre",
+            pronunciation = "(krwah-SAHN oh BUHR)"
         )
     )
 
@@ -422,6 +678,7 @@ object FoodSamples {
         NutritionAnalysis(
             foodName = "ดับเบิ้ลชีสเบอร์เกอร์คลาสสิก",
             foodNameEn = "Classic Double Cheeseburger",
+            foodNameDe = "Klassischer Doppel-Cheeseburger",
             calories = 680,
             protein = 38.0f,
             carbs = 44.0f,
@@ -430,14 +687,23 @@ object FoodSamples {
             sugar = 7.0f,
             sodium = 1180,
             portionSize = "1 ชิ้น (260g)",
+            portionSizeEn = "1 piece (260g)",
+            portionSizeDe = "1 Stück (260g)",
             mealType = "มื้อเที่ยง",
             healthTip = "เบอร์เกอร์เนื้อย่างฉ่ำ 2 ชิ้น พร้อมเชดดาร์ชีสและผักสด ให้โปรตีนและพลังงานสูง แนะนำทานคู่กับน้ำเปล่าแทนน้ำอัดลมเพื่อคุมน้ำตาล",
+            healthTipEn = "Two juicy grilled beef patties with cheddar cheese and fresh vegetables, high in protein and energy — pair with water instead of soda to control sugar intake.",
+            healthTipDe = "Zwei saftige gegrillte Rindfleisch-Patties mit Cheddar-Käse und frischem Gemüse, reich an Protein und Energie — kombiniere mit Wasser statt Limonade, um den Zuckerkonsum zu kontrollieren.",
             ingredients = listOf("ขนมปังบริออชเบอร์เกอร์", "เนื้อวัวบดย่าง 2 ชิ้น", "อเมริกันเชดดาร์ชีส", "ผักกาดแก้วและมะเขือเทศ", "แตงกวาดองและซอสเบอร์เกอร์"),
-            cuisine = "American"
+            ingredientsEn = listOf("Brioche burger bun", "2 grilled beef patties", "American cheddar cheese", "Iceberg lettuce and tomato", "Pickles and burger sauce"),
+            ingredientsDe = listOf("Brioche-Burgerbrötchen", "2 gegrillte Rindfleisch-Patties", "Amerikanischer Cheddar-Käse", "Eisbergsalat und Tomate", "Essiggurken und Burgersauce"),
+            cuisine = "American",
+            originName = "Classic Double Cheeseburger",
+            pronunciation = ""
         ),
         NutritionAnalysis(
             foodName = "ซี่โครงหมูบาร์บีคิวรมควัน",
             foodNameEn = "Texas BBQ Smoked Pork Ribs",
+            foodNameDe = "Texas-BBQ geräucherte Schweinerippchen",
             calories = 720,
             protein = 46.0f,
             carbs = 28.0f,
@@ -446,14 +712,23 @@ object FoodSamples {
             sugar = 22.0f,
             sodium = 1240,
             portionSize = "ครึ่งแผง (350g)",
+            portionSizeEn = "Half rack (350g)",
+            portionSizeDe = "Halbes Rack (350g)",
             mealType = "มื้อเย็น",
             healthTip = "สไตล์เท็กซัส รมควันด้วยไม้ฮิกคอรีจนเนื้อนุ่มร่อนจากกระดูก โปรตีนสูงมาก ซอสบาร์บีคิวมีน้ำตาลและโซเดียม ควรรับประทานร่วมกับโคลสลอว์ผักสด",
+            healthTipEn = "Texas-style, smoked with hickory wood until the meat falls off the bone. Very high in protein; the BBQ sauce contains sugar and sodium, so pair with fresh coleslaw.",
+            healthTipDe = "Texas-Stil, mit Hickory-Holz geräuchert, bis das Fleisch vom Knochen fällt. Sehr proteinreich; die BBQ-Sauce enthält Zucker und Natrium, daher am besten mit frischem Krautsalat kombinieren.",
             ingredients = listOf("ซี่โครงหมูแร็ค", "เครื่องเทศ Dry Rub สไตล์เท็กซัส", "ซอสบาร์บีคิวรมควัน", "น้ำส้มสายชูแอปเปิ้ลไซเดอร์"),
-            cuisine = "American"
+            ingredientsEn = listOf("Pork rib rack", "Texas-style dry rub spices", "Smoky barbecue sauce", "Apple cider vinegar"),
+            ingredientsDe = listOf("Schweinerippchen-Rack", "Texas-Style Dry-Rub-Gewürze", "Rauchige Barbecue-Sauce", "Apfelessig"),
+            cuisine = "American",
+            originName = "Texas BBQ Smoked Pork Ribs",
+            pronunciation = ""
         ),
         NutritionAnalysis(
             foodName = "แมคแอนด์ชีส (มักกะโรนีอบชีส)",
             foodNameEn = "Baked Macaroni and Cheese",
+            foodNameDe = "Überbackene Makkaroni mit Käse",
             calories = 520,
             protein = 19.5f,
             carbs = 56.0f,
@@ -462,14 +737,23 @@ object FoodSamples {
             sugar = 5.0f,
             sodium = 860,
             portionSize = "1 ถ้วยอบ (250g)",
+            portionSizeEn = "1 baked cup (250g)",
+            portionSizeDe = "1 überbackene Tasse (250g)",
             mealType = "มื้อเที่ยง",
             healthTip = "อาหารคอมฟอร์ตฟู้ดยอดนิยมของอเมริกา พาสต้ามักกะโรนีคลุกเคล้าซอสชีสเชดดาร์เข้มข้น แคลเซียมสูง ให้พลังงานคาร์โบไฮเดรตเต็มเปี่ยม",
+            healthTipEn = "A beloved American comfort food — macaroni pasta tossed in rich cheddar cheese sauce, high in calcium, and packed with carbohydrate energy.",
+            healthTipDe = "Ein beliebtes amerikanisches Comfort Food — Makkaroni-Nudeln in einer reichhaltigen Cheddar-Käsesauce, reich an Kalzium und voller Kohlenhydratenergie.",
             ingredients = listOf("พาสต้ามักกะโรนีข้อศอก", "ชาร์ปเชดดาร์ชีส", "มอสซาเรลล่าชีส", "นมสดและเนย", "เกล็ดขนมปังพังโกะกรอบ"),
-            cuisine = "American"
+            ingredientsEn = listOf("Elbow macaroni pasta", "Sharp cheddar cheese", "Mozzarella cheese", "Milk and butter", "Crispy panko breadcrumbs"),
+            ingredientsDe = listOf("Ellbogen-Makkaroni", "Sharp-Cheddar-Käse", "Mozzarella-Käse", "Milch und Butter", "Knusprige Panko-Brotkrümel"),
+            cuisine = "American",
+            originName = "Baked Macaroni and Cheese",
+            pronunciation = ""
         ),
         NutritionAnalysis(
             foodName = "ไก่ทอดกรอบคลาสสิก",
             foodNameEn = "Southern Crispy Fried Chicken",
+            foodNameDe = "Südstaaten knuspriges Brathähnchen",
             calories = 590,
             protein = 41.0f,
             carbs = 26.0f,
@@ -478,14 +762,23 @@ object FoodSamples {
             sugar = 0.5f,
             sodium = 1050,
             portionSize = "2 ชิ้น (สะโพก + น่อง)",
+            portionSizeEn = "2 pieces (thigh + drumstick)",
+            portionSizeDe = "2 Stück (Schenkel + Unterschenkel)",
             mealType = "มื้อเที่ยง",
             healthTip = "สไตล์ทางใต้ของสหรัฐฯ หมักบัตเตอร์มิลค์และเครื่องเทศ 11 ชนิด หนังกรอบนอกนุ่มชุ่มฉ่ำใน โปรตีนสูง",
+            healthTipEn = "Southern U.S. style, marinated in buttermilk with 11 spices — crispy outside, juicy and tender inside, high in protein.",
+            healthTipDe = "Südstaaten-Stil, in Buttermilch mit 11 Gewürzen mariniert — außen knusprig, innen saftig und zart, reich an Protein.",
             ingredients = listOf("ไก่สดหมักบัตเตอร์มิลค์", "แป้งสาลีผสมปาปริก้า กระเทียม พริกไทย", "น้ำมันพืชสำหรับทอด"),
-            cuisine = "American"
+            ingredientsEn = listOf("Chicken marinated in buttermilk", "Wheat flour with paprika, garlic, and pepper", "Vegetable oil for frying"),
+            ingredientsDe = listOf("In Buttermilch mariniertes Hähnchen", "Weizenmehl mit Paprika, Knoblauch und Pfeffer", "Pflanzenöl zum Frittieren"),
+            cuisine = "American",
+            originName = "Southern Crispy Fried Chicken",
+            pronunciation = ""
         ),
         NutritionAnalysis(
             foodName = "พายแอปเปิ้ลอเมริกัน",
             foodNameEn = "Traditional American Apple Pie",
+            foodNameDe = "Traditioneller amerikanischer Apfelkuchen",
             calories = 340,
             protein = 3.5f,
             carbs = 48.0f,
@@ -494,10 +787,18 @@ object FoodSamples {
             sugar = 25.0f,
             sodium = 240,
             portionSize = "1 ชิ้น (140g)",
+            portionSizeEn = "1 slice (140g)",
+            portionSizeDe = "1 Stück (140g)",
             mealType = "ของว่าง",
             healthTip = "ของหวานสัญลักษณ์ประจำชาติอเมริกา แอปเปิ้ล Granny Smith อบคลุกเคล้าอบเชยและน้ำตาลทรายแดง แป้งพายเนยกรอบร่วน อุดมด้วยสารต้านอนุมูลอิสระจากอบเชย",
+            healthTipEn = "An iconic American dessert — Granny Smith apples baked with cinnamon and brown sugar in a crisp buttery pastry crust, rich in antioxidants from the cinnamon.",
+            healthTipDe = "Ein ikonisches amerikanisches Dessert — Granny-Smith-Äpfel gebacken mit Zimt und braunem Zucker in einer knusprigen Buttermürbeteigkruste, reich an Antioxidantien aus dem Zimt.",
             ingredients = listOf("แอปเปิ้ลเขียว Granny Smith", "แป้งพายเนยอบทอง", "ผงอบเชย (Cinnamon)", "ลูกจันทน์เทศ", "น้ำตาลทรายแดง"),
-            cuisine = "American"
+            ingredientsEn = listOf("Granny Smith green apples", "Golden-baked butter pastry crust", "Cinnamon powder", "Nutmeg", "Brown sugar"),
+            ingredientsDe = listOf("Grüne Granny-Smith-Äpfel", "Goldgebackene Buttermürbeteigkruste", "Zimtpulver", "Muskatnuss", "Brauner Zucker"),
+            cuisine = "American",
+            originName = "Traditional American Apple Pie",
+            pronunciation = ""
         )
     )
 
