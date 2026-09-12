@@ -109,14 +109,29 @@ android {
     applicationId = "com.suw1labs.caloriecam"
     minSdk = libs.versions.minSdk.get().toInt()
     targetSdk = libs.versions.targetSdk.get().toInt()
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = System.getenv("ANDROID_VERSION_CODE")?.toIntOrNull() ?: 1
+    versionName = System.getenv("ANDROID_VERSION_NAME") ?: "1.0"
     buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
   }
 
   buildFeatures {
     compose = true
     buildConfig = true
+  }
+
+  // Release signing is only configured when CI supplies it via env vars (see
+  // .github/workflows/release.yml); local `assembleRelease`/`bundleRelease` builds
+  // stay unsigned exactly as before when these are unset.
+  val releaseKeystorePath = System.getenv("ANDROID_KEYSTORE_PATH")
+  signingConfigs {
+    if (releaseKeystorePath != null) {
+      create("release") {
+        storeFile = file(releaseKeystorePath)
+        storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+        keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+        keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+      }
+    }
   }
 
   compileOptions {
@@ -140,6 +155,9 @@ android {
   buildTypes {
     release {
       isMinifyEnabled = false
+      if (releaseKeystorePath != null) {
+        signingConfig = signingConfigs.getByName("release")
+      }
     }
   }
 }
